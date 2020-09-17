@@ -21,16 +21,16 @@ I class
 
 	^unNumero next.! !
 
-!I class methodsFor: 'operaciones' stamp: 'MA 9/15/2020 23:49:07'!
+!I class methodsFor: 'operaciones' stamp: 'MA 9/17/2020 12:41:55'!
 -unNumero
 
-	self error: 'descripcionDeErrorDeNumerosNegativosNoSoportados'.! !
+	^self error: 'Numeros negativos no soportados'.! !
 
-!I class methodsFor: 'operaciones' stamp: 'MA 9/16/2020 00:07:58'!
+!I class methodsFor: 'operaciones' stamp: 'MA 9/17/2020 12:42:11'!
 /unNumero
 	
 	unNumero == I ifTrue: [^I.].
-	self error: 'descripcionDeErrorDeNoSePuedeDividirPorUnNumeroMayor'.! !
+	self error: 'No se puede dividir por un numero mayor'.! !
 
 !I class methodsFor: 'operaciones' stamp: 'MA 9/15/2020 23:06:33'!
 next
@@ -45,6 +45,15 @@ next
 previous 
 
 	^self.! !
+
+
+!I class methodsFor: 'descripciones de error' stamp: 'MA 9/17/2020 12:41:11'!
+descripcionDeErrorDeNoSePuedeDividirPorUnNumeroMayor
+	^'No se puede dividir por un numero mayor'! !
+
+!I class methodsFor: 'descripciones de error' stamp: 'MA 9/17/2020 12:41:20'!
+descripcionDeErrorDeNumerosNegativosNoSoportados
+	^'Numeros negativos no soportados'! !
 
 
 !classDefinition: #II category: #'Numeros de Peano'!
@@ -77,10 +86,10 @@ II class
 	(unNumero == I) ifTrue: [^self previous.].
 	^self previous - unNumero previous.! !
 
-!II class methodsFor: 'operaciones' stamp: 'MA 9/16/2020 00:01:08'!
+!II class methodsFor: 'operaciones' stamp: 'MA 9/17/2020 12:43:00'!
 /unNumero
 
-	(unNumero isDescendantOf: self) ifTrue: [self error: 'descripcionDeErrorDeNoSePuedeDividirPorUnNumeroMayor'].
+	(unNumero isDescendantOf: self) ifTrue: [self error: 'No se puede dividir por un numero mayor'].
 	
 	(unNumero == self) ifTrue:[^I].
 	(unNumero isDescendantOf: (self - unNumero)) ifTrue:[^I].
@@ -124,8 +133,16 @@ IIIII subclass: #IIIIII
 	category: 'Numeros de Peano'!
 
 
-!classDefinition: #NumerosDePeanoTest category: #'Numeros de Peano'!
-DenotativeObject subclass: #NumerosDePeanoTest
+!classDefinition: #IIIIIII category: #'Numeros de Peano'!
+IIIIII subclass: #IIIIIII
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Numeros de Peano'!
+
+
+!classDefinition: #IIIIIIII category: #'Numeros de Peano'!
+IIIIIII subclass: #IIIIIIII
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
