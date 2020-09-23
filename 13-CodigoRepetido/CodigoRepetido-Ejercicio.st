@@ -116,7 +116,7 @@ test06RemovingASuspendedCustomerShouldRemoveItFromCustomerBook
 	
 ! !
 
-!CustomerBookTest methodsFor: 'testing' stamp: 'AM 9/20/2020 17:23:00'!
+!CustomerBookTest methodsFor: 'testing' stamp: 'AM 9/23/2020 15:31:45'!
 test07CanNotSuspendAnInvalidCustomer
 	
 	| customerBook johnLennon |
@@ -125,15 +125,10 @@ test07CanNotSuspendAnInvalidCustomer
 	johnLennon := 'John Lennon'.
 	customerBook addCustomerNamed: johnLennon.
 	
-	[ customerBook suspendCustomerNamed: 'George Harrison'.
-	self fail ]
-		on: CantSuspend 
-		do: [ :anError | 
-			self assert: (customerBook numberOfCustomers: 'all') = 1.
-			self assert: (customerBook includesCustomerNamed: johnLennon) ]
+	self cantSuspend: 'George Harrison' in: customerBook.
 ! !
 
-!CustomerBookTest methodsFor: 'testing' stamp: 'AM 9/20/2020 17:23:09'!
+!CustomerBookTest methodsFor: 'testing' stamp: 'AM 9/23/2020 15:30:33'!
 test08CanNotSuspendAnAlreadySuspendedCustomer
 	
 	| customerBook johnLennon |
@@ -143,13 +138,7 @@ test08CanNotSuspendAnAlreadySuspendedCustomer
 	customerBook addCustomerNamed: johnLennon.
 	customerBook suspendCustomerNamed: johnLennon.
 	
-	[ customerBook suspendCustomerNamed: johnLennon.
-	self fail ]
-		on: CantSuspend 
-		do: [ :anError | 
-			self assert: (customerBook numberOfCustomers: 'all') = 1.
-			self assert: (customerBook includesCustomerNamed: johnLennon) ]
-! !
+	self cantSuspend: johnLennon in: customerBook.! !
 
 
 !CustomerBookTest methodsFor: 'time benchmark' stamp: 'AM 9/20/2020 16:10:37'!
@@ -163,6 +152,17 @@ milisecondsToRun: aBlock
 	millisecondsAfterRunning := Time millisecondClockValue * millisecond.
 	
 	^millisecondsAfterRunning-millisecondsBeforeRunning.! !
+
+
+!CustomerBookTest methodsFor: 'as yet unclassified' stamp: 'AM 9/23/2020 15:27:33'!
+cantSuspend: aPerson in: aCustomerBook
+
+	[ aCustomerBook suspendCustomerNamed: aPerson.
+	self fail ]
+		on: CantSuspend 
+		do: [ :anError | 
+			self assert: (aCustomerBook numberOfCustomers: 'all') = 1.
+			self assert: (aCustomerBook includesCustomerNamed: 'John Lennon') ]! !
 
 
 !classDefinition: #CustomerBook category: #'CodigoRepetido-Ejercicio'!
