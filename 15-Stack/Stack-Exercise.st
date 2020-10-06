@@ -146,6 +146,32 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/5/2020 20:58:28'!
+test01FindsSentence
+
+	|stack finder expected|
+	
+	stack := OOStack new.
+	stack push: 'hola' ; push: 'chau'; push: 'Chau'; push: 'ch'.
+	finder := SentenceFinderByPrefix new.
+	expected := OrderedCollection new.
+	expected add: 'chau'.
+	
+	self assert: (expected = (finder find: 'chau' on: 	stack)).! !
+
+!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/5/2020 18:24:55'!
+test02FindDoesntModifyStack
+
+	|stack finder expected|
+	
+	stack := OOStack new.
+	stack push: 'hola' ; push: 'chau'; push: 'Chau'.
+	expected := stack copy.
+	finder := SentenceFinderByPrefix new.
+	finder find: 'chau' on: 	stack.
+	
+	1 to: (stack size) do: [:a | self assert: (stack pop = expected pop)]. ! !
+
 
 !classDefinition: #Node category: 'Stack-Exercise'!
 Object subclass: #Node
@@ -270,10 +296,10 @@ size
 
 	^size.! !
 
-!OOStack methodsFor: 'accessing' stamp: 'AM 10/5/2020 16:30:04'!
+!OOStack methodsFor: 'accessing' stamp: 'AM 10/5/2020 17:26:54'!
 top
 	
-	^top storedObjectIfNone: [self raiseEmptyStackError]. ! !
+	^top storedObjectIfNone: [self raiseEmptyStackError].! !
 
 
 !OOStack methodsFor: 'operations' stamp: 'AM 10/5/2020 16:35:43'!
@@ -315,3 +341,29 @@ Object subclass: #SentenceFinderByPrefix
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AM 10/5/2020 20:59:42'!
+filter: collectionOfSentences by: prefix
+
+	^collectionOfSentences select: [:sentence | (prefix size <= sentence size) ifTrue: [(sentence copyFrom: 1 to: (prefix size)) = prefix]
+															ifFalse: [false].]! !
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AM 10/5/2020 20:57:12'!
+find: prefix on: stackToSearch
+
+	|stackElements|
+	stackElements := self getElements: stackToSearch.
+
+	^self filter: stackElements by: prefix.! !
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AM 10/5/2020 20:47:50'!
+getElements: stack
+	
+	|stackElements|
+	stackElements := OrderedCollection new.
+	
+	1 to: stack size do: [:a | stackElements addFirst: (stack pop)].
+	
+	stackElements do: [:sentence | stack push: sentence].
+	
+	^stackElements.! !
