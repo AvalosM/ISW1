@@ -146,112 +146,135 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:03:39'!
+!SentenceFinderByPrefixTest methodsFor: 'setUp' stamp: 'AM 10/7/2020 18:59:58'!
+pushElemtentsFrom: array into: stack
+
+	array do: [:element | stack push: element]! !
+
+!SentenceFinderByPrefixTest methodsFor: 'setUp' stamp: 'AM 10/7/2020 18:55:30'!
 setUp
 
 	finder := SentenceFinderByPrefix new.
-	
 	emptyStack := OOStack new.
 ! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:34:34'!
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:04:37'!
 test01FindsSentence
 
-	|stack|
-	stack := OOStack new.
-	stack push: 'uno dos'; push: 'dos'.
+	|stack expectedResult|
 	
-	self assert:((OrderedCollection with: 'uno dos') = (finder findSentencesPrefixedBy: 'uno' on: stack)).! !
+	stack := OOStack new.
+	self pushElemtentsFrom: #('uno dos' 'tres') into: stack. 
+	expectedResult := OrderedCollection with: 'uno dos'.
+	
+	self assert: expectedResult equals: (finder find: 'u' in: stack).! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:12:12'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:04:44'!
 test02FindDoesntModifyStack
 
-	|stack stackCopy|
+	|stack|
+	
 	stack := OOStack new.
-	stack push: 'uno dos'; push: 'dos'.
-	stackCopy := stack copy.
-	finder findSentencesPrefixedBy: 'uno' on: stack.
+	self pushElemtentsFrom: #('uno' 'dos') into: stack.
+	finder find: 'u' in: stack.
 	
-	self assert: (stack size = stackCopy size).
-	
-	1 to: stack size do: [:a | self assert: (stack pop = stackCopy pop)]
+	self assert: stack size equals: 2.
+	self assert: stack pop equals: 'dos'.
+	self assert: stack pop equals: 'uno'
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:26:49'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:04:47'!
 test03EmptyPrefixIsInvalid
 
 	
 	|stack|
+	
 	stack := OOStack new.
-	stack push: 'uno dos'; push: 'dos'.
+	stack push: 'uno'.
 	
 	self 
-		should: [finder findSentencesPrefixedBy: '' on: stack]
+		should: [finder find: '' in: stack]
 		raise: Error
 		withExceptionDo: [ :anError | self assert: anError messageText equals: (SentenceFinderByPrefix invalidPrefixErrorDescription)]. ! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:28:00'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:04:51'!
 test04PrefixWithSpaceIsInvalid
 
 	|stack|
+	
 	stack := OOStack new.
-	stack push: 'uno dos'; push: 'dos'.
+	stack push: 'uno dos'.
 	
 	self 
-		should: [finder findSentencesPrefixedBy: 'uno dos' on: stack]
+		should: [finder find: 'uno dos' in: stack]
 		raise: Error
 		withExceptionDo: [ :anError | self assert: anError messageText equals: (SentenceFinderByPrefix invalidPrefixErrorDescription)]. ! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:30:08'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:04:54'!
 test05FinderIsCaseSensitive
 
-	|stack|
-	stack := OOStack new.
-	stack push: 'uno'; push: 'UNO'; push: 'Uno'.
+	|stack expectedResult|
 	
-	self assert: ((OrderedCollection with: 'Uno') = (finder findSentencesPrefixedBy: 'Uno' on: stack))! !
+	stack := OOStack new.
+	self pushElemtentsFrom: #('uno' 'Uno') into: stack.
+	expectedResult := OrderedCollection with: 'Uno'.
+	
+	self assert: expectedResult equals: (finder find: 'Uno' in: stack).! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:33:44'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:14:41'!
 test06FindsMultipleInstances
 
-	|stack|
-	stack := OOStack new.
-	stack push: 'uno dos'; push: 'dos'; push: 'dos'.
+	|stack expectedResult|
 	
-	self assert: ((OrderedCollection with: 'dos' with: 'dos') = (finder findSentencesPrefixedBy: 'dos' on: stack)).
+	stack := OOStack new.
+	self pushElemtentsFrom: #('uno dos' 'dos tres' 'dos') into: stack.
+	expectedResult := OrderedCollection with: 'dos' with: 'dos tres'.
+	
+	self assert: expectedResult equals: (finder find: 'dos' in: stack).
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:37:19'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:05:00'!
 test07PrefixLongerThanSentencesDoesntFail
 
-	|stack|
-	stack := OOStack new.
-	stack push: 'uno'; push: 'dos'.
+	|stack expectedResult|
 	
-	self assert: ((	OrderedCollection new) = (finder findSentencesPrefixedBy: 'tres' on: stack))! !
+	stack := OOStack new.
+	stack push: 'uno'. 
+	expectedResult := OrderedCollection new.
+	
+	self assert: expectedResult equals: (finder find: 'tres' in: stack).! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:39:18'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:05:04'!
 test08PrefixNotPresentReturnsEmptyCollection
 
-	|stack|
+	|stack expectedResult|
+	
 	stack := OOStack new.
-	stack push: 'uno dos'; push: 'dos'.
+	stack push: 'uno'.
+	expectedResult := OrderedCollection new.
 	
-	self assert: ((OrderedCollection new) = (finder findSentencesPrefixedBy: 'tres' on: stack))! !
+	self assert: expectedResult equals: (finder find: 'tres' in: stack).! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:40:53'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:05:07'!
 test09FinderOnEmptyStackReturnsEmptyCollection
-	
-	self assert: ((OrderedCollection new) = (finder findSentencesPrefixedBy: 'tres' on: emptyStack))! !
 
-!SentenceFinderByPrefixTest methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:43:10'!
+	|expectedResult|
+	
+	expectedResult := OrderedCollection new.
+	
+	self assert: expectedResult equals: (finder find: 'tres' in: emptyStack).! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:05:10'!
 test10FindsSentencesWithSpaces
 
-	|stack|
-	stack := OOStack new.
-	stack push: 'uno dos'; push: 'dos uno'.
+	|stack expectedResult|
 	
-	self assert:((OrderedCollection with: 'uno dos') = (finder findSentencesPrefixedBy: 'uno' on: stack)).! !
+	stack := OOStack new.
+	stack push: 'uno dos'. 
+	expectedResult := OrderedCollection with: 'uno dos'.
+	
+	self assert: expectedResult equals: (finder find: 'uno' in: stack).! !
 
 
 !classDefinition: #Node category: 'Stack-Exercise'!
@@ -366,7 +389,7 @@ isEmpty
 	^top isEmpty.! !
 
 
-!OOStack methodsFor: 'error messages' stamp: 'AM 10/5/2020 16:29:23'!
+!OOStack methodsFor: 'error raising' stamp: 'AM 10/5/2020 16:29:23'!
 raiseEmptyStackError
 
 	^self error: self class stackEmptyErrorDescription.! !
@@ -423,46 +446,48 @@ Object subclass: #SentenceFinderByPrefix
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 16:42:05'!
-filter: collectionOfSentences by: prefix
-	
-	|resultCollection|
-	resultCollection := collectionOfSentences select: [:sentence | (prefix size <= sentence size)].
-														
-	^resultCollection select: [:sentence | (sentence copyFrom: 1 to: prefix size) = prefix].
-													! !
+!SentenceFinderByPrefix methodsFor: 'private operations' stamp: 'AM 10/7/2020 20:15:08'!
+add: sentence to: resultCollection ifPrefixIs: prefix
 
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 16:39:09'!
-findSentencesPrefixedBy: prefix on: stackToSearch
+	((prefix size <= sentence size) and: [(sentence copyFrom: 1 to: prefix size) = prefix]) 
+	ifTrue: [resultCollection add: sentence].! !
 
-	|stackElements|
-	(self isValidPrefix: prefix) ifFalse: [self raiseInvalidPrefixError].
-	
-	stackElements := self getElements: stackToSearch.
-	
-	^self filter: stackElements by: prefix.! !
-
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AM 10/5/2020 20:47:50'!
-getElements: stack
+!SentenceFinderByPrefix methodsFor: 'private operations' stamp: 'AM 10/7/2020 20:16:20'!
+addSentencesFrom: stack withPrefix: prefix to: resultCollection
 	
 	|stackElements|
+	
 	stackElements := OrderedCollection new.
-	
-	1 to: stack size do: [:a | stackElements addFirst: (stack pop)].
-	
+	1 to: stack size do: [:a | self add: stack top to: resultCollection ifPrefixIs: prefix.
+					stackElements addFirst: (stack pop)].
+				
 	stackElements do: [:sentence | stack push: sentence].
-	
-	^stackElements.! !
+	! !
 
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 17:26:36'!
+!SentenceFinderByPrefix methodsFor: 'private operations' stamp: 'AM 10/6/2020 17:26:36'!
 isValidPrefix: prefix
 
 	^(prefix isEmpty not & (prefix allSatisfy: [:char | char ~= $ ])).! !
 
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AM 10/6/2020 16:38:40'!
+
+!SentenceFinderByPrefix methodsFor: 'error raising' stamp: 'AM 10/6/2020 16:38:40'!
 raiseInvalidPrefixError
 
 	^self error: self class invalidPrefixErrorDescription.! !
+
+
+!SentenceFinderByPrefix methodsFor: 'operations' stamp: 'AM 10/7/2020 20:03:37'!
+find: prefix in: stackToSearch
+
+	|resultCollection|
+	
+	resultCollection := OrderedCollection new.
+	
+	(self isValidPrefix: prefix) ifFalse: [self raiseInvalidPrefixError].
+	
+	self addSentencesFrom: stackToSearch withPrefix: prefix to: resultCollection.
+	
+	^resultCollection.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
