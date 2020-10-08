@@ -234,7 +234,7 @@ test06FindsMultipleInstances
 	self assert: expectedResult equals: (finder find: 'dos' in: stack).
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:05:00'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/8/2020 15:12:02'!
 test07PrefixLongerThanSentencesDoesntFail
 
 	|stack expectedResult|
@@ -243,9 +243,9 @@ test07PrefixLongerThanSentencesDoesntFail
 	stack push: 'uno'. 
 	expectedResult := OrderedCollection new.
 	
-	self assert: expectedResult equals: (finder find: 'tres' in: stack).! !
+	self assert: expectedResult equals: (finder find: 'unos' in: stack).! !
 
-!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:05:04'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/8/2020 15:08:55'!
 test08PrefixNotPresentReturnsEmptyCollection
 
 	|stack expectedResult|
@@ -254,7 +254,7 @@ test08PrefixNotPresentReturnsEmptyCollection
 	stack push: 'uno'.
 	expectedResult := OrderedCollection new.
 	
-	self assert: expectedResult equals: (finder find: 'tres' in: stack).! !
+	self assert: expectedResult equals: (finder find: 'dos' in: stack).! !
 
 !SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'AM 10/7/2020 20:05:07'!
 test09FinderOnEmptyStackReturnsEmptyCollection
