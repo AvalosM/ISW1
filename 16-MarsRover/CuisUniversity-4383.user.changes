@@ -28750,3 +28750,2106 @@ PASSED!
 ----SNAPSHOT----(24 October 2020 17:58:38) CuisUniversity-4383.image priorSource: 17311099!
 
 ----QUIT----(24 October 2020 17:58:41) CuisUniversity-4383.image priorSource: 17346051!
+
+----STARTUP---- (25 October 2020 19:54:44) as C:\Users\Chara\Desktop\Facultad\Ingenieria 1\CuisAct\CuisUniversity-4383.image!
+
+!MarsRover methodsFor: 'testing' stamp: 'AM 10/25/2020 20:09:24' prior: 50873585!
+assertValidCommand: aCommandChar
+
+	| validCommands |
+	
+	validCommands := OrderedCollection with: $f with: $b with: $l with: $r.
+	
+	validCommands detect: [:validCommand | (aCommandChar = validCommand)] ifNone: [^self signalInvalidCommand].
+	
+	
+		! !
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:09:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:09:42'!
+PASSED!
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+
+!testRun: #MarsRoverTest #test04 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:10:13'!
+PASSED!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:15:32' prior: 50873064!
+test02
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	self assert: marsRover direction class equals: N. ! !
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:15:34'!
+PASSED!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:16:08' prior: 50873159!
+test07
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'l'.
+	
+	self assert: marsRover direction class equals: E. ! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:16:18' prior: 50873267!
+test08
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'r'.
+	
+	self assert: marsRover direction class equals: W. ! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:16:27' prior: 50873370!
+test09
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	marsRover recieveCommands: 'ffrf'.
+	
+	self assert: marsRover direction class equals: E.
+	self assert: marsRover position equals: 1@2.! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:16:51' prior: 50873674!
+test11
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'fflafl']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		
+	self assert: 0@2 equals: marsRover position.
+	self assert: marsRover direction class equals: W.
+		! !
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+
+!testRun: #MarsRoverTest #test04 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:16:54'!
+PASSED!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:17:10' prior: 50873805!
+test11
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'fflafl']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		
+	self assert:  marsRover position equals: 0@2.
+	self assert: marsRover direction class equals: W.
+		! !
+
+!methodRemoval: E #asSymbol stamp: 'AM 10/25/2020 20:17:17'!
+asSymbol
+	
+	^#E.!
+
+!methodRemoval: N #asSymbol stamp: 'AM 10/25/2020 20:17:22'!
+asSymbol
+
+	^#N!
+
+!methodRemoval: S #asSymbol stamp: 'AM 10/25/2020 20:17:27'!
+asSymbol
+
+	^#S!
+
+!methodRemoval: W #asSymbol stamp: 'AM 10/25/2020 20:17:33'!
+asSymbol
+
+	^#W!
+!W methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:17:55'!
+l
+
+	marsRover turnSouth.! !
+
+!methodRemoval: MarsRover #directionSymbol stamp: 'AM 10/25/2020 20:18:36'!
+directionSymbol
+
+	^direction asSymbol. !
+
+!classRenamed: #E as: #East stamp: 'AM 10/25/2020 20:19:20'!
+Smalltalk renameClassNamed: #E as: #East!
+!MarsRover class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50873205!
+facingEastAtCoordinates: aCoordinate
+	
+	| aMarsRover |
+	
+	aMarsRover := MarsRover new.
+	
+	aMarsRover initializeAtCoordinates: aCoordinate facing: (East for: aMarsRover). 
+	
+	^aMarsRover.! !
+!Float class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50598550!
+e
+	"Answer the constant, e."
+
+	^East! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50359985!
+example10
+"
+	self example10 openInWorld
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example10.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #B)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #East)
+		layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #G)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+^ pane! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50873777!
+test07
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'l'.
+	
+	self assert: marsRover direction class equals: East. ! !
+!Float class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50595820 overrides: 50685238!
+releaseClassCachedState
+
+	Pi _ nil.
+	Halfpi _ nil.
+	Twopi _ nil.
+	RadiansPerDegree _ nil.
+
+	Ln2 _ nil.
+	Ln10 _ nil.
+	Sqrt2 _ nil.
+	East _ nil.
+
+	MaxVal _ nil.
+	MaxValLn _ nil.
+	MinValLogBase2 _ nil.
+
+	Infinity _ nil.
+	NegativeInfinity _ nil.
+	NaN _ nil.
+	NegativeZero _ nil! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50675119!
+example1
+"
+	self example1
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example1.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #B)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #East)
+		layoutSpec: (LayoutSpec fixedWidth: 200 fixedHeight: 200).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #G)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+pane morphPosition: 150@130 extent: 400@300.
+pane openInWorld! !
+!MarsRover methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50873187!
+turnEast
+	
+	direction := East for: self.! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50873795!
+test09
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	marsRover recieveCommands: 'ffrf'.
+	
+	self assert: marsRover direction class equals: East.
+	self assert: marsRover position equals: 1@2.! !
+!Float class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50600349 overrides: 16784996!
+initClassCachedState
+	"Float initialize"
+	"Constants from Computer Approximations, pp. 182-183:
+		Pi = 3.14159265358979323846264338327950288
+		Pi/2 = 1.57079632679489661923132169163975144
+		Pi*2 = 6.28318530717958647692528676655900576
+		Pi/180 = 0.01745329251994329576923690768488612
+		2.0 ln = 0.69314718055994530941723212145817657
+		2.0 sqrt = 1.41421356237309504880168872420969808"
+
+	Pi _ 3.14159265358979323846264338327950288.
+	Halfpi _ Pi / 2.0.
+	Twopi _ Pi * 2.0.
+	RadiansPerDegree _ Pi / 180.0.
+
+	Ln2 _ 0.69314718055994530941723212145817657.
+	Ln10 _ 10.0 ln.
+	Sqrt2 _ 1.41421356237309504880168872420969808.
+	East _ 2.718281828459045235360287471353.
+
+	MaxVal _ 1.7976931348623157e308.
+	MaxValLn _ 709.782712893384.
+	MinValLogBase2 _ -1074.
+
+	Infinity _ MaxVal * MaxVal.
+	NegativeInfinity _ 0.0 - Infinity.
+	NaN _ Infinity - Infinity.
+	NegativeZero _ Float fmin negated nextTowardsZero.
+! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50360170!
+example1b
+"
+Based on #example1, but using some Morph instead of RectangleLikeMorph -> extent is not adjustable
+	self example1b
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example1.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addMorph: (Morph new name: #B);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #East)
+		layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (Morph new name: #G);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (Morph new name: #J);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+pane morphPosition: 150@130 extent: 400@300.
+pane openInWorld! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:19:20' prior: 50360053!
+example11
+"
+	self example11
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example11.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #B)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #East)
+		layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #G)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+pane morphPosition: 150@130 extent: 400@300.
+pane openInWorld! !
+
+!classRenamed: #East as: #FacingEast stamp: 'AM 10/25/2020 20:20:40'!
+Smalltalk renameClassNamed: #East as: #FacingEast!
+!Float class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50874064 overrides: 16784996!
+initClassCachedState
+	"Float initialize"
+	"Constants from Computer Approximations, pp. 182-183:
+		Pi = 3.14159265358979323846264338327950288
+		Pi/2 = 1.57079632679489661923132169163975144
+		Pi*2 = 6.28318530717958647692528676655900576
+		Pi/180 = 0.01745329251994329576923690768488612
+		2.0 ln = 0.69314718055994530941723212145817657
+		2.0 sqrt = 1.41421356237309504880168872420969808"
+
+	Pi _ 3.14159265358979323846264338327950288.
+	Halfpi _ Pi / 2.0.
+	Twopi _ Pi * 2.0.
+	RadiansPerDegree _ Pi / 180.0.
+
+	Ln2 _ 0.69314718055994530941723212145817657.
+	Ln10 _ 10.0 ln.
+	Sqrt2 _ 1.41421356237309504880168872420969808.
+	FacingEast _ 2.718281828459045235360287471353.
+
+	MaxVal _ 1.7976931348623157e308.
+	MaxValLn _ 709.782712893384.
+	MinValLogBase2 _ -1074.
+
+	Infinity _ MaxVal * MaxVal.
+	NegativeInfinity _ 0.0 - Infinity.
+	NaN _ Infinity - Infinity.
+	NegativeZero _ Float fmin negated nextTowardsZero.
+! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50874157!
+example11
+"
+	self example11
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example11.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #B)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #FacingEast)
+		layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #G)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+pane morphPosition: 150@130 extent: 400@300.
+pane openInWorld! !
+!Float class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50873969 overrides: 50685238!
+releaseClassCachedState
+
+	Pi _ nil.
+	Halfpi _ nil.
+	Twopi _ nil.
+	RadiansPerDegree _ nil.
+
+	Ln2 _ nil.
+	Ln10 _ nil.
+	Sqrt2 _ nil.
+	FacingEast _ nil.
+
+	MaxVal _ nil.
+	MaxValLn _ nil.
+	MinValLogBase2 _ nil.
+
+	Infinity _ nil.
+	NegativeInfinity _ nil.
+	NaN _ nil.
+	NegativeZero _ nil! !
+!MarsRover class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50873877!
+facingEastAtCoordinates: aCoordinate
+	
+	| aMarsRover |
+	
+	aMarsRover := MarsRover new.
+	
+	aMarsRover initializeAtCoordinates: aCoordinate facing: (FacingEast for: aMarsRover). 
+	
+	^aMarsRover.! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50873959!
+test07
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'l'.
+	
+	self assert: marsRover direction class equals: FacingEast. ! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50873981!
+example1
+"
+	self example1
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example1.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #B)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #FacingEast)
+		layoutSpec: (LayoutSpec fixedWidth: 200 fixedHeight: 200).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #G)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+pane morphPosition: 150@130 extent: 400@300.
+pane openInWorld! !
+!MarsRover methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50874048!
+turnEast
+	
+	direction := FacingEast for: self.! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50874053!
+test09
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	marsRover recieveCommands: 'ffrf'.
+	
+	self assert: marsRover direction class equals: FacingEast.
+	self assert: marsRover position equals: 1@2.! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50873891!
+example10
+"
+	self example10 openInWorld
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example10.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #B)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #FacingEast)
+		layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #G)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+^ pane! !
+!Float class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50873886!
+e
+	"Answer the constant, e."
+
+	^FacingEast! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:20:40' prior: 50874096!
+example1b
+"
+Based on #example1, but using some Morph instead of RectangleLikeMorph -> extent is not adjustable
+	self example1b
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example1.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addMorph: (Morph new name: #B);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #FacingEast)
+		layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (Morph new name: #G);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (Morph new name: #J);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+pane morphPosition: 150@130 extent: 400@300.
+pane openInWorld! !
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+!testRun: #MarsRoverTest #test04 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:21:36'!
+PASSED!
+
+----STARTUP---- (25 October 2020 20:22:38) as C:\Users\Chara\Desktop\Facultad\Ingenieria 1\CuisAct\CuisUniversity-4383.image!
+
+
+!classRenamed: #E as: #FacingEast stamp: 'AM 10/25/2020 20:24:17'!
+Smalltalk renameClassNamed: #E as: #FacingEast!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50873370!
+test09
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	marsRover recieveCommands: 'ffrf'.
+	
+	self assert: marsRover directionSymbol equals: #FacingEast.
+	self assert: marsRover position equals: 1@2.! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50360170!
+example1b
+"
+Based on #example1, but using some Morph instead of RectangleLikeMorph -> extent is not adjustable
+	self example1b
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example1.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addMorph: (Morph new name: #B);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #FacingEast)
+		layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (Morph new name: #G);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (Morph new name: #J);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+pane morphPosition: 150@130 extent: 400@300.
+pane openInWorld! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50675119!
+example1
+"
+	self example1
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example1.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #B)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #FacingEast)
+		layoutSpec: (LayoutSpec fixedWidth: 200 fixedHeight: 200).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #G)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+pane morphPosition: 150@130 extent: 400@300.
+pane openInWorld! !
+!MarsRover class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50873205!
+facingEastAtCoordinates: aCoordinate
+	
+	| aMarsRover |
+	
+	aMarsRover := MarsRover new.
+	
+	aMarsRover initializeAtCoordinates: aCoordinate facing: (FacingEast for: aMarsRover). 
+	
+	^aMarsRover.! !
+!MarsRover methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50873187!
+turnEast
+	
+	direction := FacingEast for: self.! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50359985!
+example10
+"
+	self example10 openInWorld
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example10.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #B)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #FacingEast)
+		layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #G)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+^ pane! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50873159!
+test07
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'l'.
+	
+	self assert: marsRover directionSymbol equals: #FacingEast. ! !
+!Float class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50595820 overrides: 50685238!
+releaseClassCachedState
+
+	Pi _ nil.
+	Halfpi _ nil.
+	Twopi _ nil.
+	RadiansPerDegree _ nil.
+
+	Ln2 _ nil.
+	Ln10 _ nil.
+	Sqrt2 _ nil.
+	FacingEast _ nil.
+
+	MaxVal _ nil.
+	MaxValLn _ nil.
+	MinValLogBase2 _ nil.
+
+	Infinity _ nil.
+	NegativeInfinity _ nil.
+	NaN _ nil.
+	NegativeZero _ nil! !
+!Float class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50598550!
+e
+	"Answer the constant, e."
+
+	^FacingEast! !
+!LayoutMorph class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50360053!
+example11
+"
+	self example11
+"
+| pane row |
+pane _ (LayoutMorph newColumn separation: 5)	name: #example11.
+pane color: Color red.
+
+row _ LayoutMorph newRow name: #Row1.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #A)
+		layoutSpec: (LayoutSpec fixedWidth: 10); 
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #B)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #C)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #D)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.15);
+	addAdjusterMorph; 
+	addMorph: (BorderedRectMorph new color: (Color h: 60 s: 0.6 v: 0.6); name: #FacingEast)
+		layoutSpec: (LayoutSpec fixedWidth: 20 fixedHeight: 20).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row2.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color blue); name: #F)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #G)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.4);
+	addMorph: (BorderedRectMorph new color: (Color h: 30 s: 0.6 v: 0.6); name: #H)
+		layoutSpec: (LayoutSpec proportionalWidth: 0.2).
+pane addMorph: row layoutSpec: LayoutSpec useAll.
+
+row _ (LayoutMorph newRow separation: 5) name: #Row3.
+row
+	color: Color red;
+	addMorph: (BorderedRectMorph new color: (Color h: 120 s: 0.6 v: 0.6); name: #J)
+		layoutSpec: (LayoutSpec fixedWidth: 20 proportionalHeight: 0.8);
+	addMorph: (BorderedRectMorph new color: (Color h: 90 s: 0.6 v: 0.6); name: #K)
+		layoutSpec: (LayoutSpec  proportionalWidth: 0.5 fixedHeight: 40);
+	addMorph: (BorderedRectMorph new color: (Color h: 150 s: 0.6 v: 0.6); name: #L)
+		layoutSpec: (LayoutSpec fixedWidth: 30 proportionalHeight: 1.0).
+pane addMorph: row layoutSpec: (LayoutSpec fixedHeight: 60).
+pane morphPosition: 150@130 extent: 400@300.
+pane openInWorld! !
+!FacingEast methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50873197!
+asSymbol
+	
+	^#FacingEast.! !
+!Float class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:17' prior: 50600349 overrides: 16784996!
+initClassCachedState
+	"Float initialize"
+	"Constants from Computer Approximations, pp. 182-183:
+		Pi = 3.14159265358979323846264338327950288
+		Pi/2 = 1.57079632679489661923132169163975144
+		Pi*2 = 6.28318530717958647692528676655900576
+		Pi/180 = 0.01745329251994329576923690768488612
+		2.0 ln = 0.69314718055994530941723212145817657
+		2.0 sqrt = 1.41421356237309504880168872420969808"
+
+	Pi _ 3.14159265358979323846264338327950288.
+	Halfpi _ Pi / 2.0.
+	Twopi _ Pi * 2.0.
+	RadiansPerDegree _ Pi / 180.0.
+
+	Ln2 _ 0.69314718055994530941723212145817657.
+	Ln10 _ 10.0 ln.
+	Sqrt2 _ 1.41421356237309504880168872420969808.
+	FacingEast _ 2.718281828459045235360287471353.
+
+	MaxVal _ 1.7976931348623157e308.
+	MaxValLn _ 709.782712893384.
+	MinValLogBase2 _ -1074.
+
+	Infinity _ MaxVal * MaxVal.
+	NegativeInfinity _ 0.0 - Infinity.
+	NaN _ Infinity - Infinity.
+	NegativeZero _ Float fmin negated nextTowardsZero.
+! !
+
+!classRenamed: #N as: #FacingNorth stamp: 'AM 10/25/2020 20:24:33'!
+Smalltalk renameClassNamed: #N as: #FacingNorth!
+!Character class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:33' prior: 50686615!
+namedCharactersTable
+	"Table of named characters that we can enter in an editor using \name.
+	Please keep the names short and try to follow the naming convention used in LaTeX."
+	^ #((left $) (right $) (up $) (down $) (oplus $ê) (otimes $ë) (times $◊) (div $˜) #(circ $í) (dot $∑) (bullet $ì) (diamond $î) (star $ï) (alpha $à) (beta $â) (gamma $ä) (delta $ã) (epsilon $å) (lambda $ç) (mu $µ) (pi $é) (zeta $è) (Delta $ñ) (Gamma $ó) (Omega $ò) (N $Ç) (Z $É) (Q $Ñ) (R $Ö) (C $Ü) (P $á) (infty $Ä) (aleph $Å) (sqrt $ü) (partial $û) (degree $∞))! !
+!MarsRover methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:33' prior: 50873341!
+turnNorth
+	
+	direction := FacingNorth for: self.! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:33' prior: 50873064!
+test02
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	self assert: marsRover directionSymbol equals: #FacingNorth. ! !
+!MarsRover class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:33' prior: 50872854!
+facingNorthAtCoordinates: aCoordinate
+	
+	| aMarsRover |
+	
+	aMarsRover := MarsRover new.
+	
+	aMarsRover initializeAtCoordinates: aCoordinate facing: (FacingNorth for: aMarsRover). 
+	
+	^aMarsRover.! !
+!FacingNorth methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:33' prior: 50873055!
+asSymbol
+
+	^#FacingNorth! !
+
+!classRenamed: #S as: #FacingSouth stamp: 'AM 10/25/2020 20:24:48'!
+Smalltalk renameClassNamed: #S as: #FacingSouth!
+!FacingSouth methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:48' prior: 50873155!
+asSymbol
+
+	^#FacingSouth! !
+!MarsRover class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:48' prior: 50873122!
+facingSouthAtCoordinates: aCoordinate
+	
+	| aMarsRover |
+	
+	aMarsRover := MarsRover new.
+	
+	aMarsRover initializeAtCoordinates: aCoordinate facing: (FacingSouth for: aMarsRover). 
+	
+	^aMarsRover.! !
+!MarsRover methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:48' prior: 50873345!
+turnSouth
+	
+	direction := FacingSouth for: self.! !
+
+!classRenamed: #W as: #FacingWest stamp: 'AM 10/25/2020 20:24:57'!
+Smalltalk renameClassNamed: #W as: #FacingWest!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:57' prior: 50873674!
+test11
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'fflafl']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		
+	self assert: 0@2 equals: marsRover position.
+	self assert: #FacingWest equals: marsRover directionSymbol.
+		! !
+!MarsRover class methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:57' prior: 50873214!
+facingWestAtCoordinates: aCoordinate
+	
+	| aMarsRover |
+	
+	aMarsRover := MarsRover new.
+	
+	aMarsRover initializeAtCoordinates: aCoordinate facing: (FacingWest for: aMarsRover). 
+	
+	^aMarsRover.! !
+!MarsRover methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:57' prior: 50873292!
+turnWest
+	
+	direction := FacingWest for: self.! !
+!FacingWest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:57' prior: 50873254!
+asSymbol
+
+	^#FacingWest! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:24:57' prior: 50873267!
+test08
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'r'.
+	
+	self assert: marsRover directionSymbol equals: #FacingWest. ! !
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+
+!testRun: #MarsRoverTest #test04 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:25:15'!
+PASSED!
+!MarsRover methodsFor: 'testing' stamp: 'AM 10/25/2020 20:27:06' prior: 50873585!
+assertValidCommand: aCommandChar
+
+	| validCommands |
+	
+	validCommands := OrderedCollection with: $f with: $b with: $l with: $r.
+	
+	validCommands detect: [:validCommand | (validCommand = aCommandChar)] ifNone: [^self signalInvalidCommand].
+	
+		! !
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:27:11'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:27:11'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:27:11'!
+PASSED!
+
+!testRun: #MarsRoverTest #test04 stamp: 'AM 10/25/2020 20:27:11'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:27:11'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:27:11'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:27:11'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:27:11'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:27:11'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:27:11'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:27:12'!
+PASSED!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:27:25' prior: 50874116!
+test02
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	self assert: marsRover direction class equals: FacingNorth. ! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:27:39' prior: 50873953!
+test07
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'l'.
+	
+	self assert: marsRover direction equals: FacingEast. ! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:27:47' prior: 50874198!
+test08
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'r'.
+	
+	self assert: marsRover direction class equals: FacingWest. ! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:27:52' prior: 50874278!
+test07
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'l'.
+	
+	self assert: marsRover direction class equals: FacingEast. ! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:28:03' prior: 50873729!
+test09
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	marsRover recieveCommands: 'ffrf'.
+	
+	self assert: marsRover direction class equals: #FacingEast.
+	self assert: marsRover position equals: 1@2.! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:28:05' prior: 50874305!
+test09
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	marsRover recieveCommands: 'ffrf'.
+	
+	self assert: marsRover direction class equals: FacingEast.
+	self assert: marsRover position equals: 1@2.! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:28:35' prior: 50874165!
+test11
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'fflafl']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		
+	self assert: 0@2 equals: marsRover position.
+	self assert: marsRover direction class equals: FacingWest .
+		! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:28:36' prior: 50874327!
+test11
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'fflafl']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		
+	self assert: 0@2 equals: marsRover position.
+	self assert: marsRover direction class equals: FacingWest.
+		! !
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+
+!testRun: #MarsRoverTest #test04 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:28:38'!
+PASSED!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:29:22' prior: 50869439!
+test01
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	self assert: marsRover position equals: 1@1. ! !
+
+!methodRemoval: MarsRover class #atCoordinates: stamp: 'AM 10/25/2020 20:29:46'!
+atCoordinates: aPoint 
+
+	^self new initializeAtCoordinates: aPoint.!
+
+!methodRemoval: MarsRover #initializeAtCoordinates: stamp: 'AM 10/25/2020 20:29:54'!
+initializeAtCoordinates: aPoint 
+
+	position := aPoint.!
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!testRun: #MarsRoverTest #test04 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:29:57'!
+PASSED!
+
+!methodRemoval: MarsRoverTest #test04 stamp: 'AM 10/25/2020 20:31:35'!
+test04
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'f'.
+	
+	self assert: marsRover position equals: 1@3. !
+
+!methodRemoval: MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:31:39'!
+test06
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'f'.
+	
+	self assert: marsRover position equals: 1@1. !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:32:47'!
+test12
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'fflafl']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		
+	self assert: 0@2 equals: marsRover position.
+	self assert: marsRover direction class equals: FacingWest.
+		! !
+
+!methodRemoval: MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:32:47'!
+test11
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'fflafl']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		
+	self assert: 0@2 equals: marsRover position.
+	self assert: marsRover direction class equals: FacingWest.
+		!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:32:56'!
+test11
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'a']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		! !
+
+!methodRemoval: MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:32:56'!
+test10
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'a']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:33:04'!
+test10
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	marsRover recieveCommands: 'ffrf'.
+	
+	self assert: marsRover direction class equals: FacingEast.
+	self assert: marsRover position equals: 1@2.! !
+
+!methodRemoval: MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:33:04'!
+test09
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	marsRover recieveCommands: 'ffrf'.
+	
+	self assert: marsRover direction class equals: FacingEast.
+	self assert: marsRover position equals: 1@2.!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:34:28'!
+test09
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	marsRover recieveCommands: 'fbb'.
+	
+	self assert: marsRover position equals: 1@0. ! !
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:34:32'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:34:32'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:34:32'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:34:32'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:34:32'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:34:32'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:34:32'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:34:32'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:34:32'!
+PASSED!
+
+!testRun: #MarsRoverTest #test12 stamp: 'AM 10/25/2020 20:34:32'!
+PASSED!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:35:04' prior: 50874503!
+test09
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	marsRover recieveCommands: 'fbb'.
+	
+	self assert: marsRover direction class equals: FacingNorth. ! !
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:35:09'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:35:09'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:35:09'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:35:09'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:35:09'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:35:09'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:35:09'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:35:09'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:35:09'!
+PASSED!
+
+!testRun: #MarsRoverTest #test12 stamp: 'AM 10/25/2020 20:35:09'!
+PASSED!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:37:16'!
+test06
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'llr'.
+	
+	self assert: marsRover position equals: 1@2. ! !
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:37:19'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:37:19'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:37:19'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:37:19'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:37:19'!
+ERROR!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:37:19'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:37:19'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:37:19'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:37:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:37:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test12 stamp: 'AM 10/25/2020 20:37:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:37:20'!
+ERROR!
+!FacingWest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:37:36'!
+l
+
+	marsRover turnSouth.! !
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!testRun: #MarsRoverTest #test12 stamp: 'AM 10/25/2020 20:37:39'!
+PASSED!
+
+!methodRemoval: FacingEast #asSymbol stamp: 'AM 10/25/2020 20:38:44'!
+asSymbol
+	
+	^#FacingEast.!
+
+!methodRemoval: FacingNorth #asSymbol stamp: 'AM 10/25/2020 20:38:49'!
+asSymbol
+
+	^#FacingNorth!
+
+!methodRemoval: FacingSouth #asSymbol stamp: 'AM 10/25/2020 20:38:53'!
+asSymbol
+
+	^#FacingSouth!
+
+!methodRemoval: FacingWest #asSymbol stamp: 'AM 10/25/2020 20:38:58'!
+asSymbol
+
+	^#FacingWest!
+
+!methodRemoval: MarsRover #directionSymbol stamp: 'AM 10/25/2020 20:39:09'!
+directionSymbol
+
+	^direction asSymbol. !
+
+!testRun: #MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+
+!testRun: #MarsRoverTest #test12 stamp: 'AM 10/25/2020 20:40:10'!
+PASSED!
+!MarsRoverDirection methodsFor: 'direction actions' stamp: 'AM 10/25/2020 20:42:05'!
+l
+
+	self subclassResponsibility.! !
+!MarsRoverDirection methodsFor: 'direction actions' stamp: 'AM 10/25/2020 20:42:12'!
+r
+
+	self subclassResponsibility.! !
+!MarsRoverDirection methodsFor: 'position actions' stamp: 'AM 10/25/2020 20:42:37'!
+f
+
+	self subclassResponsibility.! !
+!MarsRoverDirection methodsFor: 'position actions' stamp: 'AM 10/25/2020 20:42:41'!
+b
+
+	self subclassResponsibility.! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:45:45'!
+test01InitializesPositionCorrectly
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	self assert: marsRover position equals: 1@1. ! !
+
+!methodRemoval: MarsRoverTest #test01InitializesPositionCorrectly stamp: 'AM 10/25/2020 20:45:51'!
+test01InitializesPositionCorrectly
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	self assert: marsRover position equals: 1@1. !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:46:13'!
+test01InitializesPositionCorrectly
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	self assert: marsRover position equals: 1@1. ! !
+
+!methodRemoval: MarsRoverTest #test01 stamp: 'AM 10/25/2020 20:46:14'!
+test01
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	self assert: marsRover position equals: 1@1. !
+
+!testRun: #MarsRoverTest #test01InitializesPositionCorrectly stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test12 stamp: 'AM 10/25/2020 20:46:20'!
+PASSED!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:46:55'!
+test02InitializesDirectionCorrectly
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	self assert: marsRover direction class equals: FacingNorth. ! !
+
+!methodRemoval: MarsRoverTest #test02 stamp: 'AM 10/25/2020 20:46:55'!
+test02
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	self assert: marsRover direction class equals: FacingNorth. !
+!FacingWest methodsFor: 'position actions' stamp: 'AM 10/25/2020 20:48:31' prior: 50873337 overrides: 50874686!
+b
+
+	marsRover xCoordinatePlusOne.! !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:49:30'!
+test03fCommandChangesPositionCorrectly
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	marsRover recieveCommands: 'f'.
+	
+	self assert: marsRover position equals: 1@2. ! !
+
+!methodRemoval: MarsRoverTest #test03 stamp: 'AM 10/25/2020 20:49:30'!
+test03
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	marsRover recieveCommands: 'f'.
+	
+	self assert: marsRover position equals: 1@2. !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:50:11'!
+test04bCommandChangesPositionCorrectly
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'b'.
+	
+	self assert: marsRover position equals: 1@1. ! !
+
+!methodRemoval: MarsRoverTest #test05 stamp: 'AM 10/25/2020 20:50:11'!
+test05
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'b'.
+	
+	self assert: marsRover position equals: 1@1. !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:51:17'!
+test05lCommandChangesDirectionCorrectly
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'l'.
+	
+	self assert: marsRover direction class equals: FacingEast. ! !
+
+!methodRemoval: MarsRoverTest #test07 stamp: 'AM 10/25/2020 20:51:17'!
+test07
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'l'.
+	
+	self assert: marsRover direction class equals: FacingEast. !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:51:41'!
+test06rCommandChangesDirectionCorrectly
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'r'.
+	
+	self assert: marsRover direction class equals: FacingWest. ! !
+
+!methodRemoval: MarsRoverTest #test08 stamp: 'AM 10/25/2020 20:51:41'!
+test08
+
+	| marsRover |
+	
+	marsRover := MarsRover facingSouthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'r'.
+	
+	self assert: marsRover direction class equals: FacingWest. !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:52:14'!
+test07DirectionChangesDoNotChangePosition
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'llr'.
+	
+	self assert: marsRover position equals: 1@2. ! !
+
+!methodRemoval: MarsRoverTest #test06 stamp: 'AM 10/25/2020 20:52:14'!
+test06
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@2.
+	
+	marsRover recieveCommands: 'llr'.
+	
+	self assert: marsRover position equals: 1@2. !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:52:44'!
+test08PositionChangesDoNotChangeDirection
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	marsRover recieveCommands: 'fbb'.
+	
+	self assert: marsRover direction class equals: FacingNorth. ! !
+
+!methodRemoval: MarsRoverTest #test09 stamp: 'AM 10/25/2020 20:52:44'!
+test09
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 1@1.
+	
+	marsRover recieveCommands: 'fbb'.
+	
+	self assert: marsRover direction class equals: FacingNorth. !
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:54:02'!
+test09PositionChangesCorrectlyAfterDirectionChange
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	marsRover recieveCommands: 'ffrf'.
+	
+	self assert: marsRover direction class equals: FacingEast.
+	self assert: marsRover position equals: 1@2.! !
+
+!methodRemoval: MarsRoverTest #test10 stamp: 'AM 10/25/2020 20:54:02'!
+test10
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	marsRover recieveCommands: 'ffrf'.
+	
+	self assert: marsRover direction class equals: FacingEast.
+	self assert: marsRover position equals: 1@2.!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:54:36'!
+test10InvalidCommandsSignalError
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'a']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		! !
+
+!methodRemoval: MarsRoverTest #test11 stamp: 'AM 10/25/2020 20:54:36'!
+test11
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'a']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		!
+!MarsRoverTest methodsFor: 'as yet unclassified' stamp: 'AM 10/25/2020 20:55:17'!
+test11CommandsAfterInvalidCommandAreNotExecuted
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'fflafl']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		
+	self assert: 0@2 equals: marsRover position.
+	self assert: marsRover direction class equals: FacingWest.
+		! !
+
+!methodRemoval: MarsRoverTest #test12 stamp: 'AM 10/25/2020 20:55:18'!
+test12
+
+	| marsRover |
+	
+	marsRover := MarsRover facingNorthAtCoordinates: 0@0.
+	
+	self 
+		should: [marsRover recieveCommands: 'fflafl']
+		raise: Error
+		withMessageText: MarsRover invalidCommandErrorDescription.
+		
+	self assert: 0@2 equals: marsRover position.
+	self assert: marsRover direction class equals: FacingWest.
+		!
+
+!testRun: #MarsRoverTest #test01InitializesPositionCorrectly stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test02InitializesDirectionCorrectly stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test03fCommandChangesPositionCorrectly stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test04bCommandChangesPositionCorrectly stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test05lCommandChangesDirectionCorrectly stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test06rCommandChangesDirectionCorrectly stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test07DirectionChangesDoNotChangePosition stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test08PositionChangesDoNotChangeDirection stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test09PositionChangesCorrectlyAfterDirectionChange stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test10InvalidCommandsSignalError stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
+
+!testRun: #MarsRoverTest #test11CommandsAfterInvalidCommandAreNotExecuted stamp: 'AM 10/25/2020 20:55:20'!
+PASSED!
