@@ -74,10 +74,10 @@ test05CantRegisterDuplicateAccounts
 	raise: Error
 	withMessageText: Portfolio duplicateAccountErrorDescription.! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/2/2020 20:46:20'!
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/6/2020 16:06:20'!
 test06CantAddAccountPresentInChildPortfolio
 
-	| portfolioChild portfolioParent account |
+	| portfolioChild portfolioParent account|
 	
 	account := ReceptiveAccount new.
 	account register: (Deposit for: 300).
@@ -90,6 +90,63 @@ test06CantAddAccountPresentInChildPortfolio
 	
 	self
 	should: [portfolioParent add: account.]
+	raise: Error
+	withMessageText: Portfolio duplicateAccountErrorDescription.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/6/2020 15:51:22'!
+test07TransactionsReturnsAllAccountsInPortfolio
+
+	| portfolio account accountTransactions transactions |
+	
+	account := ReceptiveAccount new.
+	accountTransactions := OrderedCollection with: (Deposit for: 300) with: (Withdraw for: 150).
+	account register: (accountTransactions at: 1); register: (accountTransactions at: 2).
+	
+	transactions := OrderedCollection with: accountTransactions.
+	
+	portfolio := Portfolio new.
+	portfolio add: account.
+	
+	self assert: transactions equals: portfolio transactions.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/6/2020 16:06:52'!
+test08CantAddAccountPresentInChildPortfolio
+
+	| portfolioChild portfolioParent portfolioToAdd account|
+	
+	account := ReceptiveAccount new.
+	account register: (Deposit for: 300).
+	
+	portfolioChild := Portfolio new.
+	portfolioChild add: account.
+	
+	portfolioParent := Portfolio new.
+	portfolioParent add: portfolioChild.
+	
+	portfolioToAdd:= Portfolio new.
+	portfolioToAdd add: account.
+	
+	self
+	should: [portfolioParent add: portfolioToAdd ]
+	raise: Error
+	withMessageText: Portfolio duplicateAccountErrorDescription.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/6/2020 16:25:54'!
+test09
+
+	| portfolioChild portfolioParent account|
+	
+	account := ReceptiveAccount new.
+	account register: (Deposit for: 300).
+	
+	portfolioChild := Portfolio new.
+	
+	portfolioParent := Portfolio new.
+	portfolioParent add: portfolioChild.
+	portfolioParent add: account.
+	
+	self
+	should: [portfolioChild add: account]
 	raise: Error
 	withMessageText: Portfolio duplicateAccountErrorDescription.! !
 
@@ -286,7 +343,7 @@ for: aValue
 
 !classDefinition: #Portfolio category: 'Portfolio-Ejercicio'!
 Object subclass: #Portfolio
-	instanceVariableNames: 'accountsAndPortfolios'
+	instanceVariableNames: 'accountsAndPortfolios parents'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
@@ -297,24 +354,46 @@ balance
 	^accountsAndPortfolios sum: [:anAccountOrPorfolio | anAccountOrPorfolio balance] ifEmpty: [0].! !
 
 
-!Portfolio methodsFor: 'initialization' stamp: 'AM 11/2/2020 19:33:57'!
+!Portfolio methodsFor: 'initialization' stamp: 'AM 11/6/2020 16:28:06'!
 initialize 
 
-	accountsAndPortfolios := OrderedCollection new.! !
+	accountsAndPortfolios := OrderedCollection new.
+	parents := OrderedCollection new.! !
 
 
-!Portfolio methodsFor: 'adding' stamp: 'AM 11/2/2020 20:42:51'!
+!Portfolio methodsFor: 'adding' stamp: 'AM 11/6/2020 16:27:22'!
 add: aReceptiveAccountOrPortfolio 
 	
 	self assertNotDuplicate: aReceptiveAccountOrPortfolio.
+	aReceptiveAccountOrPortfolio addParent: self.
 	accountsAndPortfolios add: aReceptiveAccountOrPortfolio.! !
 
+!Portfolio methodsFor: 'adding' stamp: 'AM 11/6/2020 16:11:28'!
+addAccountTo: anAccountCollection
+	
+	accountsAndPortfolios do: [:accountOrPortfolio | accountOrPortfolio addAccountTo: anAccountCollection].! !
 
-!Portfolio methodsFor: 'assertions' stamp: 'AM 11/2/2020 20:56:09'!
-assertNotDuplicate: aReceptiveAccount
+!Portfolio methodsFor: 'adding' stamp: 'AM 11/6/2020 16:27:52'!
+addParent: aPortfolio
 
-	accountsAndPortfolios detect: [:anAccounOrPortfolio | anAccounOrPortfolio assertNotDuplicate: aReceptiveAccount] ifNone: [^ false].
+	parents add: aPortfolio.! !
+
+
+!Portfolio methodsFor: 'assertions' stamp: 'AM 11/6/2020 16:34:03'!
+assertNotDuplicate: anAccountOrPortfolio
+	
+	| accountsInHierachy |
+	accountsInHierachy := OrderedCollection new.
+	
+	parents do: [:parent | accountsInHierachy add: ((parent searchParents) accounts)].
+	
+	(anAccountOrPortfolio accounts) detect: [:anAccount | accountsInHierachy includes: anAccount] ifNone: [^false].
 	self signalDuplicateAccount.! !
+
+!Portfolio methodsFor: 'assertions' stamp: 'AM 11/6/2020 16:35:05'!
+searchParents
+
+	parents ! !
 
 
 !Portfolio methodsFor: 'testing' stamp: 'AM 11/2/2020 19:56:22'!
@@ -334,6 +413,33 @@ hasRegistered: aTransaction
 signalDuplicateAccount
 
 	^self error: self class duplicateAccountErrorDescription.! !
+
+
+!Portfolio methodsFor: 'accessing' stamp: 'AM 11/6/2020 16:11:52'!
+accounts
+
+	| accounts |
+	
+	accounts := OrderedCollection new.
+	
+	accountsAndPortfolios do: [:accountOrPortfolio | accountOrPortfolio addAccountTo: accounts].
+	
+	^accounts.! !
+
+!Portfolio methodsFor: 'accessing' stamp: 'AM 11/6/2020 15:45:23'!
+addTransactionTo: transactionCollection
+	
+	accountsAndPortfolios do: [:anAccountOrPortFolio | anAccountOrPortFolio addTransactionTo: transactionCollection].! !
+
+!Portfolio methodsFor: 'accessing' stamp: 'AM 11/6/2020 15:46:42'!
+transactions
+	| transactionCollection |
+	
+	transactionCollection := OrderedCollection new.
+	
+	accountsAndPortfolios do: [:anAccountOrPortFolio | anAccountOrPortFolio addTransactionTo: transactionCollection].
+	
+	^transactionCollection.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -360,6 +466,16 @@ initialize
 	transactions := OrderedCollection new.! !
 
 
+!ReceptiveAccount methodsFor: 'transactions' stamp: 'AM 11/6/2020 16:10:56'!
+addAccountTo: anAccountCollection
+
+	anAccountCollection add: self.! !
+
+!ReceptiveAccount methodsFor: 'transactions' stamp: 'AM 11/6/2020 15:50:04'!
+addTransactionTo: transactionsCollection
+
+	transactionsCollection add: self transactions.! !
+
 !ReceptiveAccount methodsFor: 'transactions' stamp: 'HernanWilkinson 7/13/2011 18:37'!
 register: aTransaction
 
@@ -383,6 +499,11 @@ balance
 	! !
 
 
+!ReceptiveAccount methodsFor: 'testing' stamp: 'AM 11/6/2020 16:21:31'!
+accounts
+
+ 	^OrderedCollection with: self.! !
+
 !ReceptiveAccount methodsFor: 'testing' stamp: 'NR 10/17/2019 03:28:43'!
 hasRegistered: aTransaction
 
@@ -394,3 +515,9 @@ hasRegistered: aTransaction
 assertNotDuplicate: aReceptiveAccount
 
 	^(self = aReceptiveAccount).! !
+
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AM 11/6/2020 16:28:37'!
+addParent: aPortfolio
+
+	! !
