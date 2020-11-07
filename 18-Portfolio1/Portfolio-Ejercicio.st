@@ -14,28 +14,28 @@ test01EmptyPortfolioHasZeroBalance
 	
 	self assert: (portfolio balance) equals: 0.! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/2/2020 20:43:26'!
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/7/2020 01:34:24'!
 test02PortfolioWithOneAccountMatchesAccountBalance
 
 	| portfolio account |
 	
 	portfolio := Portfolio new.
 	
-	account := ReceptiveAccount new.
+	account := PortfolioAccount for: (ReceptiveAccount new).
 	account register: (Deposit for: 300).
 	
 	portfolio add: account.
 	
 	self assert: (account balance) equals: (portfolio balance).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/2/2020 20:43:42'!
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/7/2020 01:35:08'!
 test03PortfolioWithOnePortfolioMatchesPortFolioBalance
 
 	| portfolioChild portfolioParent account |
 	
-	portfolioChild := Portfolio new.
-	account := ReceptiveAccount new.
+	account := PortfolioAccount for: (ReceptiveAccount new).
 	account register: (Deposit for: 300).
+	portfolioChild := Portfolio new.
 	portfolioChild add: account.
 	
 	portfolioParent := Portfolio new.
@@ -44,27 +44,27 @@ test03PortfolioWithOnePortfolioMatchesPortFolioBalance
 	
 	self assert: (portfolioChild balance) equals: (portfolioParent balance).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/2/2020 20:43:36'!
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/7/2020 01:35:50'!
 test04FindsTransactionCorrectly
 
 	| portfolio account transaction|
 	
 	portfolio := Portfolio new.
 	transaction := (Deposit for: 300).
-	account := ReceptiveAccount new.
+	account := PortfolioAccount for: (ReceptiveAccount new).
 	account register: transaction.
 	
 	portfolio add: account.
 	
 	self assert: (portfolio hasRegistered: transaction).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/2/2020 20:44:23'!
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/7/2020 01:38:58'!
 test05CantRegisterDuplicateAccounts
 
 	| portfolio account |
 	
 	portfolio := Portfolio new.
-	account := ReceptiveAccount new.
+	account := PortfolioAccount for: (ReceptiveAccount new).
 	account register: (Deposit for: 300).
 	
 	portfolio add: account.
@@ -74,12 +74,12 @@ test05CantRegisterDuplicateAccounts
 	raise: Error
 	withMessageText: Portfolio duplicateAccountErrorDescription.! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/6/2020 16:06:20'!
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/7/2020 01:39:12'!
 test06CantAddAccountPresentInChildPortfolio
 
 	| portfolioChild portfolioParent account|
 	
-	account := ReceptiveAccount new.
+	account := PortfolioAccount for: (ReceptiveAccount new).
 	account register: (Deposit for: 300).
 	
 	portfolioChild := Portfolio new.
@@ -93,60 +93,44 @@ test06CantAddAccountPresentInChildPortfolio
 	raise: Error
 	withMessageText: Portfolio duplicateAccountErrorDescription.! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/6/2020 15:51:22'!
-test07TransactionsReturnsAllAccountsInPortfolio
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/7/2020 01:46:04'!
+test07CantAddPortfolioContainingAccountAlreadyPresent
 
-	| portfolio account accountTransactions transactions |
+	| portfolio portfolioToAdd account|
 	
-	account := ReceptiveAccount new.
-	accountTransactions := OrderedCollection with: (Deposit for: 300) with: (Withdraw for: 150).
-	account register: (accountTransactions at: 1); register: (accountTransactions at: 2).
-	
-	transactions := OrderedCollection with: accountTransactions.
+	account := PortfolioAccount for: (ReceptiveAccount new).
+	account register: (Deposit for: 300).
 	
 	portfolio := Portfolio new.
 	portfolio add: account.
 	
-	self assert: transactions equals: portfolio transactions.! !
-
-!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/6/2020 16:06:52'!
-test08CantAddAccountPresentInChildPortfolio
-
-	| portfolioChild portfolioParent portfolioToAdd account|
+	portfolioToAdd := Portfolio new.
+	portfolioToAdd add: account.
 	
-	account := ReceptiveAccount new.
+	self
+	should: [portfolio add: portfolioToAdd.]
+	raise: Error
+	withMessageText: Portfolio duplicateAccountErrorDescription.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/7/2020 01:52:33'!
+test08CantAddPortfolioThatSharesAccountsWithPortfolioAlreadyPresent
+
+	| portfolio portfolioChild portfolioToAdd account|
+	
+	account := PortfolioAccount for: (ReceptiveAccount new).
 	account register: (Deposit for: 300).
 	
 	portfolioChild := Portfolio new.
 	portfolioChild add: account.
 	
-	portfolioParent := Portfolio new.
-	portfolioParent add: portfolioChild.
+	portfolio := Portfolio new.
+	portfolio add: portfolioChild.
 	
-	portfolioToAdd:= Portfolio new.
+	portfolioToAdd := Portfolio new.
 	portfolioToAdd add: account.
 	
 	self
-	should: [portfolioParent add: portfolioToAdd ]
-	raise: Error
-	withMessageText: Portfolio duplicateAccountErrorDescription.! !
-
-!PortfolioTest methodsFor: 'tests' stamp: 'AM 11/6/2020 16:25:54'!
-test09
-
-	| portfolioChild portfolioParent account|
-	
-	account := ReceptiveAccount new.
-	account register: (Deposit for: 300).
-	
-	portfolioChild := Portfolio new.
-	
-	portfolioParent := Portfolio new.
-	portfolioParent add: portfolioChild.
-	portfolioParent add: account.
-	
-	self
-	should: [portfolioChild add: account]
+	should: [portfolio add: portfolioToAdd.]
 	raise: Error
 	withMessageText: Portfolio duplicateAccountErrorDescription.! !
 
@@ -341,105 +325,121 @@ for: aValue
 	^ self new initializeFor: aValue ! !
 
 
-!classDefinition: #Portfolio category: 'Portfolio-Ejercicio'!
-Object subclass: #Portfolio
-	instanceVariableNames: 'accountsAndPortfolios parents'
+!classDefinition: #PortfolioElement category: 'Portfolio-Ejercicio'!
+Object subclass: #PortfolioElement
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!Portfolio methodsFor: 'balance' stamp: 'AM 11/2/2020 19:34:23'!
+!PortfolioElement methodsFor: 'as yet unclassified' stamp: 'AM 11/6/2020 23:58:32'!
+balance
+
+	self subclassResponsibility.! !
+
+
+!classDefinition: #NullPortfolio category: 'Portfolio-Ejercicio'!
+PortfolioElement subclass: #NullPortfolio
+	instanceVariableNames: 'childPortfolio'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!NullPortfolio methodsFor: 'initialization' stamp: 'AM 11/7/2020 01:02:41'!
+initializeFor: aPortfolio
+
+	childPortfolio := aPortfolio.! !
+
+
+!NullPortfolio methodsFor: 'assertions' stamp: 'AM 11/7/2020 01:15:12'!
+assertNoDuplicates: aPortfolioElement
+
+	^false.! !
+
+!NullPortfolio methodsFor: 'assertions' stamp: 'AM 11/7/2020 00:35:01'!
+assertNoDuplicatesInHierarchy: aPortfolioElement
+
+	childPortfolio assertNoDuplicates: aPortfolioElement.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'NullPortfolio class' category: 'Portfolio-Ejercicio'!
+NullPortfolio class
+	instanceVariableNames: ''!
+
+!NullPortfolio class methodsFor: 'as yet unclassified' stamp: 'AM 11/7/2020 01:26:45'!
+for: aPortfolio
+	
+	^self new initializeFor: aPortfolio.
+	! !
+
+
+!classDefinition: #Portfolio category: 'Portfolio-Ejercicio'!
+PortfolioElement subclass: #Portfolio
+	instanceVariableNames: 'portfolioElements parentPortfolios isRoot'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!Portfolio methodsFor: 'balance' stamp: 'AM 11/7/2020 01:25:26'!
 balance
 	
-	^accountsAndPortfolios sum: [:anAccountOrPorfolio | anAccountOrPorfolio balance] ifEmpty: [0].! !
+	^portfolioElements sum: [:element | element balance] ifEmpty: [0].! !
 
 
-!Portfolio methodsFor: 'initialization' stamp: 'AM 11/6/2020 16:28:06'!
+!Portfolio methodsFor: 'initialization' stamp: 'AM 11/7/2020 01:18:31'!
 initialize 
 
-	accountsAndPortfolios := OrderedCollection new.
-	parents := OrderedCollection new.! !
+	portfolioElements := OrderedCollection new.
+	parentPortfolios := OrderedCollection with: (NullPortfolio for: self).
+	isRoot := true.! !
 
 
-!Portfolio methodsFor: 'adding' stamp: 'AM 11/6/2020 16:27:22'!
-add: aReceptiveAccountOrPortfolio 
-	
-	self assertNotDuplicate: aReceptiveAccountOrPortfolio.
-	aReceptiveAccountOrPortfolio addParent: self.
-	accountsAndPortfolios add: aReceptiveAccountOrPortfolio.! !
-
-!Portfolio methodsFor: 'adding' stamp: 'AM 11/6/2020 16:11:28'!
-addAccountTo: anAccountCollection
-	
-	accountsAndPortfolios do: [:accountOrPortfolio | accountOrPortfolio addAccountTo: anAccountCollection].! !
-
-!Portfolio methodsFor: 'adding' stamp: 'AM 11/6/2020 16:27:52'!
+!Portfolio methodsFor: 'adding private' stamp: 'AM 11/7/2020 01:19:43'!
 addParent: aPortfolio
-
-	parents add: aPortfolio.! !
-
-
-!Portfolio methodsFor: 'assertions' stamp: 'AM 11/6/2020 16:34:03'!
-assertNotDuplicate: anAccountOrPortfolio
 	
-	| accountsInHierachy |
-	accountsInHierachy := OrderedCollection new.
+	isRoot ifTrue: [parentPortfolios removeFirst.
+				isRoot := false].
+	parentPortfolios add: aPortfolio.! !
+
+
+!Portfolio methodsFor: 'adding' stamp: 'AM 11/7/2020 00:35:39'!
+add: aPortfolioElement 
 	
-	parents do: [:parent | accountsInHierachy add: ((parent searchParents) accounts)].
-	
-	(anAccountOrPortfolio accounts) detect: [:anAccount | accountsInHierachy includes: anAccount] ifNone: [^false].
+	self assertNoDuplicatesInHierarchy: aPortfolioElement.
+	aPortfolioElement addParent: self.
+	portfolioElements add: aPortfolioElement.! !
+
+
+!Portfolio methodsFor: 'assertions' stamp: 'AM 11/7/2020 00:42:42'!
+assertNoDuplicates: aPortfolioElement
+
+	portfolioElements detect: [:element | element assertNoDuplicates: aPortfolioElement] ifNone: [^false].
 	self signalDuplicateAccount.! !
 
-!Portfolio methodsFor: 'assertions' stamp: 'AM 11/6/2020 16:35:05'!
-searchParents
+!Portfolio methodsFor: 'assertions' stamp: 'AM 11/7/2020 01:04:02'!
+assertNoDuplicatesInHierarchy: aPortfolioElement
+	
+	parentPortfolios do: [:parentPortfolio | parentPortfolio assertNoDuplicatesInHierarchy: aPortfolioElement].! !
 
-	parents ! !
 
-
-!Portfolio methodsFor: 'testing' stamp: 'AM 11/2/2020 19:56:22'!
+!Portfolio methodsFor: 'testing' stamp: 'AM 11/7/2020 01:38:03'!
 hasRegistered: aTransaction
 	
-	| foundTransaction |
-	foundTransaction := false.
-	
-	accountsAndPortfolios do: [
-						:accountOrPortfolio | foundTransaction := foundTransaction or: [accountOrPortfolio  hasRegistered: aTransaction]
-						].
-	
-	^foundTransaction.! !
+	portfolioElements detect: [:element | element hasRegistered: aTransaction] ifNone: [^false].
+	^true.! !
+
+!Portfolio methodsFor: 'testing' stamp: 'AM 11/7/2020 01:50:01'!
+includesOrIsAccount: aPortfolioAccount
+
+	portfolioElements detect: [:element | element includesOrIsAccount: aPortfolioAccount] ifNone: [^false].
+	^true.! !
 
 
 !Portfolio methodsFor: 'signals' stamp: 'AM 11/2/2020 20:40:09'!
 signalDuplicateAccount
 
 	^self error: self class duplicateAccountErrorDescription.! !
-
-
-!Portfolio methodsFor: 'accessing' stamp: 'AM 11/6/2020 16:11:52'!
-accounts
-
-	| accounts |
-	
-	accounts := OrderedCollection new.
-	
-	accountsAndPortfolios do: [:accountOrPortfolio | accountOrPortfolio addAccountTo: accounts].
-	
-	^accounts.! !
-
-!Portfolio methodsFor: 'accessing' stamp: 'AM 11/6/2020 15:45:23'!
-addTransactionTo: transactionCollection
-	
-	accountsAndPortfolios do: [:anAccountOrPortFolio | anAccountOrPortFolio addTransactionTo: transactionCollection].! !
-
-!Portfolio methodsFor: 'accessing' stamp: 'AM 11/6/2020 15:46:42'!
-transactions
-	| transactionCollection |
-	
-	transactionCollection := OrderedCollection new.
-	
-	accountsAndPortfolios do: [:anAccountOrPortFolio | anAccountOrPortFolio addTransactionTo: transactionCollection].
-	
-	^transactionCollection.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -451,6 +451,71 @@ Portfolio class
 duplicateAccountErrorDescription
 	
 	^'Account is duplicate'! !
+
+
+!classDefinition: #PortfolioAccount category: 'Portfolio-Ejercicio'!
+PortfolioElement subclass: #PortfolioAccount
+	instanceVariableNames: 'receptiveAccount'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Ejercicio'!
+
+!PortfolioAccount methodsFor: 'initialization' stamp: 'AM 11/7/2020 01:23:07'!
+initializeFor: anAccount
+
+	receptiveAccount := anAccount.! !
+
+
+!PortfolioAccount methodsFor: 'assertions' stamp: 'AM 11/7/2020 00:50:00'!
+assertNoDuplicates: aPortfolioElement
+
+	^aPortfolioElement includesOrIsAccount: self.! !
+
+
+!PortfolioAccount methodsFor: 'adding' stamp: 'AM 11/7/2020 00:30:31'!
+addParent: aPortfolio
+
+! !
+
+
+!PortfolioAccount methodsFor: 'accesing' stamp: 'AM 11/7/2020 01:25:03'!
+balance 
+
+	^receptiveAccount balance.! !
+
+
+!PortfolioAccount methodsFor: 'transactions' stamp: 'AM 11/7/2020 01:31:50'!
+register: aTransaction
+
+	receptiveAccount register: aTransaction.! !
+
+!PortfolioAccount methodsFor: 'transactions' stamp: 'AM 11/7/2020 01:32:19'!
+transactions
+
+	^receptiveAccount transactions.! !
+
+
+!PortfolioAccount methodsFor: 'testing' stamp: 'AM 11/7/2020 01:32:47'!
+hasRegistered: aTransaction
+
+	^receptiveAccount hasRegistered: aTransaction.! !
+
+!PortfolioAccount methodsFor: 'testing' stamp: 'AM 11/7/2020 00:59:24'!
+includesOrIsAccount: aPortfolioAccount
+
+	
+	^self == aPortfolioAccount.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PortfolioAccount class' category: 'Portfolio-Ejercicio'!
+PortfolioAccount class
+	instanceVariableNames: ''!
+
+!PortfolioAccount class methodsFor: 'instance creation' stamp: 'AM 11/7/2020 01:22:08'!
+for: anAccount
+	
+	^self new initializeFor: anAccount.! !
 
 
 !classDefinition: #ReceptiveAccount category: 'Portfolio-Ejercicio'!
@@ -466,16 +531,6 @@ initialize
 	transactions := OrderedCollection new.! !
 
 
-!ReceptiveAccount methodsFor: 'transactions' stamp: 'AM 11/6/2020 16:10:56'!
-addAccountTo: anAccountCollection
-
-	anAccountCollection add: self.! !
-
-!ReceptiveAccount methodsFor: 'transactions' stamp: 'AM 11/6/2020 15:50:04'!
-addTransactionTo: transactionsCollection
-
-	transactionsCollection add: self transactions.! !
-
 !ReceptiveAccount methodsFor: 'transactions' stamp: 'HernanWilkinson 7/13/2011 18:37'!
 register: aTransaction
 
@@ -488,10 +543,10 @@ transactions
 	^ transactions copy! !
 
 
-!ReceptiveAccount methodsFor: 'balance' stamp: 'AM 11/2/2020 20:34:02'!
+!ReceptiveAccount methodsFor: 'balance' stamp: 'AM 11/7/2020 01:29:04'!
 balance
+
 	| balance |
-	
 	balance := 0.
 	transactions do: [:aTransaction | balance := aTransaction applyToBalance: balance].
 	
@@ -499,25 +554,8 @@ balance
 	! !
 
 
-!ReceptiveAccount methodsFor: 'testing' stamp: 'AM 11/6/2020 16:21:31'!
-accounts
-
- 	^OrderedCollection with: self.! !
-
 !ReceptiveAccount methodsFor: 'testing' stamp: 'NR 10/17/2019 03:28:43'!
 hasRegistered: aTransaction
 
 	^ transactions includes: aTransaction 
 ! !
-
-
-!ReceptiveAccount methodsFor: 'assertions' stamp: 'AM 11/2/2020 20:54:34'!
-assertNotDuplicate: aReceptiveAccount
-
-	^(self = aReceptiveAccount).! !
-
-
-!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AM 11/6/2020 16:28:37'!
-addParent: aPortfolio
-
-	! !
