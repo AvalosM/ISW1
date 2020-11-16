@@ -1,89 +1,3 @@
-!classDefinition: #AccountSummaryTest category: 'Portfolio-Solucion'!
-TestCase subclass: #AccountSummaryTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio-Solucion'!
-
-!AccountSummaryTest methodsFor: 'tests' stamp: 'AM 11/9/2020 21:43:14'!
-test01AccountSummaryForEmptyAccountIsZeroBalance
-
-	| account accountSummary |
-	account := ReceptiveAccount new.
-	accountSummary := AccountSummary for: account.
-	
-	self assert: (OrderedCollection with: 'Balance = 0') equals: accountSummary report. ! !
-
-!AccountSummaryTest methodsFor: 'tests' stamp: 'AM 11/14/2020 17:05:11'!
-test02AccountSummaryForAccountWithOneTransactionMatchesBalanceAndTransaction
-
-	| account accountSummary expectedReport |
-	
-	account := ReceptiveAccount new.
-	account register: (Deposit for: 100).
-	accountSummary := AccountSummary for: account.
-	expectedReport := OrderedCollection with: 'Deposit for 100' with: 'Balance = 100'.
-	
-	self assert: (expectedReport) equals: accountSummary report. ! !
-
-!AccountSummaryTest methodsFor: 'tests' stamp: 'AM 11/14/2020 15:22:31'!
-test03AccountSummaryForAccountWithMultipleTransactionsShowsAllTransactions
-
-	| account1 account2 accountSummary expectedReport |
-	
-	account1 := ReceptiveAccount new.
-	account2 := ReceptiveAccount new.
-	account1 register: (Deposit for: 100).
-	Transfer from: account1 to: account2 for: 50. 
-	accountSummary := AccountSummary for: account1.
-	expectedReport := OrderedCollection with: 'Deposit for 100' with: 'Transfer withdraw for 50' with: 'Balance = 50'.
-	
-	self assert: (expectedReport) equals: accountSummary report. ! !
-
-!AccountSummaryTest methodsFor: 'tests' stamp: 'AM 11/14/2020 17:09:42'!
-test04SummaryForEmptyPorfolioIsZeroBalance
-
-	| portfolio expectedReport accountSummary|
-	
-	portfolio := Portfolio new.
-	expectedReport := OrderedCollection with: 'Balance = 0'.
-	accountSummary := AccountSummary for: portfolio.
-	
-	self assert: (expectedReport) equals: accountSummary report. ! !
-
-!AccountSummaryTest methodsFor: 'tests' stamp: 'AM 11/14/2020 17:14:30'!
-test05SummaryForPorfolioWithOneAccountMatchesAccountTransactionsAndBalance
-
-	| portfolio account expectedReport accountSummary|
-	
-	account := ReceptiveAccount new.
-	account register: (Deposit for: 100); register: (Withdraw for: 100) .
-	portfolio := Portfolio new.
-	portfolio add: account.
-	
-	expectedReport := OrderedCollection with: 'Deposit for 100' with: 'Withdraw for 100' with: 'Balance = 0'.
-	accountSummary := AccountSummary for: portfolio.
-	
-	self assert: (expectedReport) equals: accountSummary report. ! !
-
-!AccountSummaryTest methodsFor: 'tests' stamp: 'AM 11/14/2020 17:15:58'!
-test06SummaryForPorfolioWithOnePortfolioMatchesPortfolioTransactionsAndBalance
-
-	| portfolioChild portfolio account expectedReport accountSummary|
-	
-	account := ReceptiveAccount new.
-	account register: (Deposit for: 100); register: (Withdraw for: 100) .
-	portfolioChild := Portfolio new.
-	portfolioChild add: account.
-	portfolio := Portfolio new.
-	portfolio add: portfolioChild.
-	
-	expectedReport := OrderedCollection with: 'Deposit for 100' with: 'Withdraw for 100' with: 'Balance = 0'.
-	accountSummary := AccountSummary for: portfolio.
-	
-	self assert: (expectedReport) equals: accountSummary report. ! !
-
-
 !classDefinition: #PortfolioTest category: 'Portfolio-Solucion'!
 TestCase subclass: #PortfolioTest
 	instanceVariableNames: ''
@@ -391,24 +305,286 @@ test07AccountKnowsItsTransactions
 ! !
 
 
-!classDefinition: #TransferNetTest category: 'Portfolio-Solucion'!
-TestCase subclass: #TransferNetTest
+!classDefinition: #ReportTests category: 'Portfolio-Solucion'!
+TestCase subclass: #ReportTests
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Solucion'!
 
-!TransferNetTest methodsFor: 'tests' stamp: 'AM 11/14/2020 17:29:43'!
+
+!classDefinition: #StructureReportTest category: 'Portfolio-Solucion'!
+ReportTests subclass: #StructureReportTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!StructureReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:26'!
+test01ReceptiveAccountStructureIsAccountName
+
+	| account report expectedReport|
+	
+	account := ReceptiveAccount named: 'Account'.
+	report := StructureReport for: account.
+	
+	expectedReport := OrderedCollection with: 'Account'.
+	
+	self assert: (report report) equals: expectedReport.! !
+
+!StructureReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:42:37'!
+test02PortfolioWithAccountDisplaysProperIndentation
+
+	| portfolio account report expectedReport|
+	
+	account := ReceptiveAccount named: 'Account'.
+	portfolio := Portfolio named: 'Portfolio' with: account.
+	report := StructureReport for: portfolio.
+	
+	expectedReport := OrderedCollection   with: 'Portfolio' 
+									with: '    Account'.
+	
+	self assert: (report report) equals: expectedReport.! !
+
+!StructureReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:42:27'!
+test03PortfolioWithTwoAccountsDisplaysAccountsWithEqualIndentation
+
+	| portfolio account1 account2 report expectedReport|
+	
+	account1 := ReceptiveAccount named: 'Account1'.
+	account2 := ReceptiveAccount named: 'Account2'.
+	portfolio := Portfolio named: 'Portfolio' with: account1 with: account2.
+	report := StructureReport for: portfolio.
+	
+	expectedReport := OrderedCollection   with: 'Portfolio' 
+									with: '    Account1' 
+									with: '    Account2'.
+	
+	self assert: (report report) equals: expectedReport.! !
+
+!StructureReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:42:11'!
+test04PortfolioWithChildPortfolioDisplaysProperIndentationForChildPortfolio
+
+	| portfolio portfolioChild account report expectedReport|
+	
+	account := ReceptiveAccount named: 'Account'.
+	portfolioChild := Portfolio named: 'Portfolio child' with: account.
+	portfolio := Portfolio named: 'Portfolio' with: portfolioChild.
+	report := StructureReport for: portfolio.
+	
+	expectedReport := OrderedCollection   with: 'Portfolio' 
+									with: '    Portfolio child' 
+									with: '        Account'.
+	
+	self assert: (report report) equals: expectedReport.! !
+
+!StructureReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:41:54'!
+test05PortfolioWithChildPortfolioDisplaysProperIndentationForAccountsAfterChildPortfolio
+
+	| portfolio portfolioChild account1 account2 report expectedReport|
+	
+	account1 := ReceptiveAccount named: 'Account1'.
+	account2 := ReceptiveAccount named: 'Account2'.
+	portfolioChild := Portfolio named: 'Portfolio child' with: account1.
+	portfolio := Portfolio named: 'Portfolio' with: portfolioChild with: account2.
+	report := StructureReport for: portfolio.
+	
+	expectedReport := OrderedCollection   with: 'Portfolio' 
+							  	     	with: '    Portfolio child' 
+									with: '        Account1'
+									with: '    Account2'.
+	
+	self assert: (report report) equals: expectedReport.! !
+
+
+!classDefinition: #StructuredSummaryTest category: 'Portfolio-Solucion'!
+ReportTests subclass: #StructuredSummaryTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!StructuredSummaryTest methodsFor: 'tests' stamp: 'AM 11/15/2020 23:12:40'!
+test01AccountStructuredSummaryIncludesAccountSummary
+	
+	| account report expectedReport|
+	
+	account := ReceptiveAccount named: 'Account'.
+	account register: (Deposit for: 100).
+	report := StructuredSummaryReport for: account.
+	
+	expectedReport := OrderedCollection   with: 'Account' 
+									with: '    Deposit for 100' 
+									with: '    Balance = 100'.
+	
+	self assert: (report report) equals: expectedReport.! !
+
+!StructuredSummaryTest methodsFor: 'tests' stamp: 'AM 11/15/2020 23:14:31'!
+test02PortfolioStructuredSummaryIncludesAccountSummary
+	
+	| portfolio account report expectedReport|
+	
+	account := ReceptiveAccount named: 'Account'.
+	account register: (Deposit for: 100).
+	portfolio := Portfolio named: 'Portfolio' with: account.
+	report := StructuredSummaryReport for: portfolio.
+	
+	expectedReport := OrderedCollection   with: 'Portfolio'
+									with: '    Account' 
+									with: '        Deposit for 100' 
+									with: '        Balance = 100'.
+	
+	self assert: (report report) equals: expectedReport.! !
+
+!StructuredSummaryTest methodsFor: 'tests' stamp: 'AM 11/15/2020 23:16:56'!
+test03PortfolioWithChildPortfolioStructuredSummaryIncludesChildPortflioSummary
+	
+	| portfolio portfolioChild account report expectedReport|
+	
+	account := ReceptiveAccount named: 'Account'.
+	account register: (Deposit for: 100).
+	portfolioChild := Portfolio named: 'Portfolio child' with: account.
+	portfolio := Portfolio named: 'Portfolio' with: portfolioChild.
+	report := StructuredSummaryReport for: portfolio.
+	
+	expectedReport := OrderedCollection   with: 'Portfolio'
+									with: '    Portfolio child'
+									with: '        Account' 
+									with: '            Deposit for 100' 
+									with: '            Balance = 100'.
+	
+	self assert: (report report) equals: expectedReport.! !
+
+!StructuredSummaryTest methodsFor: 'tests' stamp: 'AM 11/15/2020 23:22:56'!
+test04PortfolioWithChildPortfolioStructuredSummaryShowsEqualIndentationForAccountsAndPortfolios
+	
+	| portfolio portfolioChild account1 account2 report expectedReport|
+	
+	account1 := ReceptiveAccount named: 'Account1'.
+	account1 register: (Deposit for: 100).
+	account2 := ReceptiveAccount named: 'Account2'.
+	account2 register: (Deposit for: 200).
+	portfolioChild := Portfolio named: 'Portfolio child' with: account1.
+	portfolio := Portfolio named: 'Portfolio' with: portfolioChild with: account2.
+	report := StructuredSummaryReport for: portfolio.
+	
+	expectedReport := OrderedCollection   with: 'Portfolio'
+									with: '    Portfolio child'
+									with: '        Account1' 
+									with: '            Deposit for 100' 
+									with: '            Balance = 100'.
+					       expectedReport add: '    Account2'.
+						expectedReport add: '        Deposit for 200'.
+						expectedReport add: '        Balance = 200'.
+									
+	
+	self assert: (report report) equals: expectedReport.! !
+
+
+!classDefinition: #SummaryReportTest category: 'Portfolio-Solucion'!
+ReportTests subclass: #SummaryReportTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!SummaryReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:33'!
+test01AccountSummaryForEmptyAccountIsZeroBalance
+
+	| account accountSummary |
+	account := ReceptiveAccount new.
+	accountSummary := SummaryReport for: account.
+	
+	self assert: (OrderedCollection with: 'Balance = 0') equals: accountSummary report. ! !
+
+!SummaryReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:33'!
+test02AccountSummaryForAccountWithOneTransactionMatchesBalanceAndTransaction
+
+	| account accountSummary expectedReport |
+	
+	account := ReceptiveAccount new.
+	account register: (Deposit for: 100).
+	accountSummary := SummaryReport for: account.
+	expectedReport := OrderedCollection with: 'Deposit for 100' with: 'Balance = 100'.
+	
+	self assert: (expectedReport) equals: accountSummary report. ! !
+
+!SummaryReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:33'!
+test03AccountSummaryForAccountWithMultipleTransactionsShowsAllTransactions
+
+	| account1 account2 accountSummary expectedReport |
+	
+	account1 := ReceptiveAccount new.
+	account2 := ReceptiveAccount new.
+	account1 register: (Deposit for: 100).
+	Transfer from: account1 to: account2 for: 50. 
+	accountSummary := SummaryReport for: account1.
+	expectedReport := OrderedCollection with: 'Deposit for 100' with: 'TransferWithdraw for 50' with: 'Balance = 50'.
+	
+	self assert: (expectedReport) equals: accountSummary report. ! !
+
+!SummaryReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:33'!
+test04SummaryForEmptyPorfolioIsZeroBalance
+
+	| portfolio expectedReport accountSummary|
+	
+	portfolio := Portfolio new.
+	expectedReport := OrderedCollection with: 'Balance = 0'.
+	accountSummary := SummaryReport for: portfolio.
+	
+	self assert: (expectedReport) equals: accountSummary report. ! !
+
+!SummaryReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:33'!
+test05SummaryForPorfolioWithOneAccountMatchesAccountTransactionsAndBalance
+
+	| portfolio account expectedReport accountSummary|
+	
+	account := ReceptiveAccount new.
+	account register: (Deposit for: 100); register: (Withdraw for: 100) .
+	portfolio := Portfolio new.
+	portfolio add: account.
+	
+	expectedReport := OrderedCollection with: 'Deposit for 100' with: 'Withdraw for 100' with: 'Balance = 0'.
+	accountSummary := SummaryReport for: portfolio.
+	
+	self assert: (expectedReport) equals: accountSummary report. ! !
+
+!SummaryReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:33'!
+test06SummaryForPorfolioWithOnePortfolioMatchesPortfolioTransactionsAndBalance
+
+	| portfolioChild portfolio account expectedReport accountSummary|
+	
+	account := ReceptiveAccount new.
+	account register: (Deposit for: 100); register: (Withdraw for: 100) .
+	portfolioChild := Portfolio new.
+	portfolioChild add: account.
+	portfolio := Portfolio new.
+	portfolio add: portfolioChild.
+	
+	expectedReport := OrderedCollection with: 'Deposit for 100' with: 'Withdraw for 100' with: 'Balance = 0'.
+	accountSummary := SummaryReport for: portfolio.
+	
+	self assert: (expectedReport) equals: accountSummary report. ! !
+
+
+!classDefinition: #TransferNetReportTest category: 'Portfolio-Solucion'!
+ReportTests subclass: #TransferNetReportTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!TransferNetReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:41'!
 test01EmptyAccountTransferNetIsZero
 
 	| account transferNetReport |
 	
 	account := ReceptiveAccount new.
-	transferNetReport := TransferNet for: account.
+	transferNetReport := TransferNetReport for: account.
 	
 	self assert: (transferNetReport report) equals: 0.! !
 
-!TransferNetTest methodsFor: 'tests' stamp: 'AM 11/14/2020 17:36:25'!
+!TransferNetReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:41'!
 test02TransferNetReportForAccountWithTransferWithdrawMatchesWithdrawAmount
 
 	| account1 account2 transferNetReport |
@@ -418,11 +594,11 @@ test02TransferNetReportForAccountWithTransferWithdrawMatchesWithdrawAmount
 	
 	Transfer from: account1 to: account2 for: 500. 
 	
-	transferNetReport := TransferNet for: account1.
+	transferNetReport := TransferNetReport for: account1.
 	
 	self assert: (transferNetReport report) equals: -500.! !
 
-!TransferNetTest methodsFor: 'tests' stamp: 'AM 11/14/2020 17:43:39'!
+!TransferNetReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:41'!
 test03TransferNetReportForAccountWithTransferDepositMatchesDepositAmount
 
 	| account1 account2 transferNetReport |
@@ -432,11 +608,11 @@ test03TransferNetReportForAccountWithTransferDepositMatchesDepositAmount
 	
 	Transfer from: account1 to: account2 for: 500. 
 	
-	transferNetReport := TransferNet for: account2.
+	transferNetReport := TransferNetReport for: account2.
 	
 	self assert: (transferNetReport report) equals: 500.! !
 
-!TransferNetTest methodsFor: 'tests' stamp: 'AM 11/14/2020 17:44:19'!
+!TransferNetReportTest methodsFor: 'tests' stamp: 'AM 11/15/2020 22:30:41'!
 test04NonTransferTransactionsDontAffectTrasferNet
 
 	| account1 account2 transferNetReport |
@@ -448,7 +624,7 @@ test04NonTransferTransactionsDontAffectTrasferNet
 	
 	Transfer from: account1 to: account2 for: 500. 
 	
-	transferNetReport := TransferNet for: account1.
+	transferNetReport := TransferNetReport for: account1.
 	
 	self assert: (transferNetReport report) equals: -500.! !
 
@@ -537,7 +713,7 @@ test06TransfersToAndFromTheSameAccountNotAllowed
 
 !classDefinition: #Account category: 'Portfolio-Solucion'!
 Object subclass: #Account
-	instanceVariableNames: ''
+	instanceVariableNames: 'name'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Solucion'!
@@ -574,6 +750,13 @@ transactions
 addedTo: aPortfolio
 
 	self subclassResponsibility ! !
+
+
+!Account methodsFor: 'name' stamp: 'AM 11/15/2020 23:52:59'!
+name
+	
+	^name copy.
+	! !
 
 
 !classDefinition: #Portfolio category: 'Portfolio-Solucion'!
@@ -618,11 +801,20 @@ rootParents
 	^ rootParents! !
 
 
-!Portfolio methodsFor: 'initialization' stamp: 'HAW 5/25/2019 12:03:18'!
+!Portfolio methodsFor: 'initialization' stamp: 'AM 11/15/2020 21:13:56'!
 initialize
 
 	accounts := OrderedCollection new.
-	parents := OrderedCollection new.! !
+	parents := OrderedCollection new.
+	"Default name for portfolio"
+	name := 'Portfolio'! !
+
+!Portfolio methodsFor: 'initialization' stamp: 'AM 11/15/2020 21:13:25'!
+initializeWithName: aName
+
+	accounts := OrderedCollection new.
+	parents := OrderedCollection new.
+	name := aName.! !
 
 
 !Portfolio methodsFor: 'balance' stamp: 'AM 11/14/2020 15:14:58'!
@@ -687,6 +879,13 @@ signalCanNotAddAccount
 	
 	self error: self class canNotAddAccountErrorMessage! !
 
+
+!Portfolio methodsFor: 'reports - private' stamp: 'AM 11/15/2020 23:33:48'!
+reportTo: aReport
+	
+	aReport handlePortfolio: self.
+	accounts do: [:account | account reportTo: aReport].! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Portfolio class' category: 'Portfolio-Solucion'!
@@ -697,6 +896,26 @@ Portfolio class
 canNotAddAccountErrorMessage
 	
 	^'Can not add repeated account to a portfolio!!'! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'AM 11/15/2020 21:12:36'!
+named: aName 
+
+	^self new initializeWithName: aName! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'AM 11/15/2020 21:11:52'!
+named: aName with: anAccount
+
+	^(self new initializeWithName: aName)
+		add: anAccount;
+		yourself! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'AM 11/15/2020 21:12:18'!
+named: aName with: anAccount with: anotherAccount
+
+	^(self new initializeWithName: aName)
+		add: anAccount;
+		add: anotherAccount;
+		yourself! !
 
 !Portfolio class methodsFor: 'as yet unclassified' stamp: 'HAW 5/25/2019 11:18:21'!
 with: anAccount
@@ -716,18 +935,25 @@ with: anAccount with: anotherAccount
 
 !classDefinition: #ReceptiveAccount category: 'Portfolio-Solucion'!
 Account subclass: #ReceptiveAccount
-	instanceVariableNames: 'transactions sentTransfers recievedTransfers'
+	instanceVariableNames: 'transactions'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Solucion'!
 
-!ReceptiveAccount methodsFor: 'initialization' stamp: 'AM 11/9/2020 20:11:59'!
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'AM 11/15/2020 21:14:04'!
 initialize
 
 	super initialize.
 	transactions := OrderedCollection new.
-	sentTransfers := OrderedCollection new.
-	recievedTransfers := OrderedCollection new.! !
+	"Default name for accounts created without a name"
+	name := 'Receptive account'! !
+
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'AM 11/15/2020 21:08:51'!
+initializeWithName: aName
+
+	super initialize.
+	transactions := OrderedCollection new.
+	name := aName.! !
 
 
 !ReceptiveAccount methodsFor: 'transactions' stamp: 'NR 11/9/2020 05:56:36'!
@@ -772,6 +998,305 @@ addedTo: aPortfolio
 	
 	! !
 
+
+!ReceptiveAccount methodsFor: 'reports - private' stamp: 'AM 11/15/2020 23:34:24'!
+reportTo: aReport
+	
+	aReport handleReceptiveAccount: self.
+	transactions do: [:account | account reportTo: aReport].! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'ReceptiveAccount class' category: 'Portfolio-Solucion'!
+ReceptiveAccount class
+	instanceVariableNames: ''!
+
+!ReceptiveAccount class methodsFor: 'as yet unclassified' stamp: 'AM 11/15/2020 21:08:11'!
+named: aName
+
+	^self new initializeWithName: aName.! !
+
+
+!classDefinition: #AccountReports category: 'Portfolio-Solucion'!
+Object subclass: #AccountReports
+	instanceVariableNames: 'account'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!AccountReports methodsFor: 'report' stamp: 'AM 11/9/2020 21:43:01'!
+report
+
+	self subclassResponsibility.! !
+
+
+!AccountReports methodsFor: 'initialization' stamp: 'AM 11/9/2020 21:42:04'!
+initializeFor: anAccount
+
+	account := anAccount.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'AccountReports class' category: 'Portfolio-Solucion'!
+AccountReports class
+	instanceVariableNames: ''!
+
+!AccountReports class methodsFor: 'as yet unclassified' stamp: 'AM 11/9/2020 21:40:53'!
+for: anAccount
+
+	^self new initializeFor: anAccount.! !
+
+
+!classDefinition: #StructureReports category: 'Portfolio-Solucion'!
+AccountReports subclass: #StructureReports
+	instanceVariableNames: 'structure indentation treeLevelSize'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!StructureReports methodsFor: 'indentation - private' stamp: 'AM 11/16/2020 01:19:56'!
+decreaseIndentation
+
+	indentation := indentation copyFrom: 1 to: (indentation size - 4).! !
+
+!StructureReports methodsFor: 'indentation - private' stamp: 'AM 11/16/2020 01:20:08'!
+decreaseIndentationIfLastInLevel
+
+	(treeLevelSize last = 0) ifTrue: [self decreaseIndentation.
+							treeLevelSize removeLast.].
+						
+	! !
+
+!StructureReports methodsFor: 'indentation - private' stamp: 'AM 11/16/2020 01:20:11'!
+increaseIndentation
+	
+	indentation := indentation,'    '.! !
+
+!StructureReports methodsFor: 'indentation - private' stamp: 'AM 11/16/2020 01:20:15'!
+updateLastLevelSize
+
+	| lastLevelSize |
+	
+	lastLevelSize := treeLevelSize last.
+	treeLevelSize removeLast.
+	treeLevelSize addLast: lastLevelSize -1.
+	! !
+
+
+!StructureReports methodsFor: 'initialization' stamp: 'AM 11/16/2020 01:21:11'!
+initialize 
+
+	structure := OrderedCollection new.
+	treeLevelSize := OrderedCollection with: 1.
+	indentation := ''.! !
+
+
+!StructureReports methodsFor: 'report' stamp: 'AM 11/16/2020 01:21:25'!
+report
+	
+	account reportTo: self.
+	^structure.! !
+
+
+!StructureReports methodsFor: 'report - private' stamp: 'AM 11/16/2020 01:23:09'!
+handleDeposit: aDeposit
+
+	! !
+
+!StructureReports methodsFor: 'report - private' stamp: 'AM 11/16/2020 01:22:44'!
+handlePortfolio: aPortfolio
+	
+	structure add: indentation, aPortfolio name.
+	self updateLastLevelSize.
+	treeLevelSize addLast: aPortfolio accountsSize.
+	self increaseIndentation.! !
+
+!StructureReports methodsFor: 'report - private' stamp: 'AM 11/16/2020 01:23:31'!
+handleTransferDeposit: aTransferDeposit
+! !
+
+!StructureReports methodsFor: 'report - private' stamp: 'AM 11/16/2020 01:23:36'!
+handleTransferWithdraw: aTransferWithdraw
+
+	! !
+
+!StructureReports methodsFor: 'report - private' stamp: 'AM 11/16/2020 01:23:39'!
+handleWithdraw: aWithdraw
+! !
+
+
+!classDefinition: #StructureReport category: 'Portfolio-Solucion'!
+StructureReports subclass: #StructureReport
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!StructureReport methodsFor: 'report - private' stamp: 'AM 11/16/2020 01:01:30'!
+handleReceptiveAccount: aReceptiveAccount
+
+	structure add: indentation, aReceptiveAccount name.
+	self updateLastLevelSize.
+	self decreaseIndentationIfLastInLevel.
+	
+	treeLevelSize isEmpty ifFalse: [self decreaseIndentationIfLastInLevel].
+	! !
+
+
+!classDefinition: #StructuredSummaryReport category: 'Portfolio-Solucion'!
+StructureReports subclass: #StructuredSummaryReport
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!StructuredSummaryReport methodsFor: 'indentation - private' stamp: 'AM 11/16/2020 01:16:03'!
+updateLastLevelSize
+
+	| lastLevelSize |
+	
+	lastLevelSize := treeLevelSize last.
+	treeLevelSize removeLast.
+	treeLevelSize addLast: lastLevelSize -1.
+	! !
+
+
+!StructuredSummaryReport methodsFor: 'report - private' stamp: 'AM 11/15/2020 23:11:54'!
+addSummaryFor: aReceptiveAccount withIndentation: anIndentationString
+
+	| indentedSummary |
+	
+	indentedSummary := ((SummaryReport for: aReceptiveAccount) report) collect: [:summaryEntry | anIndentationString, summaryEntry].
+	
+	structure addAll: indentedSummary.
+	
+	! !
+
+!StructuredSummaryReport methodsFor: 'report - private' stamp: 'AM 11/16/2020 01:11:52'!
+handleReceptiveAccount: aReceptiveAccount
+
+	structure add: indentation, aReceptiveAccount name.
+	self addSummaryFor: aReceptiveAccount withIndentation: ('    ', indentation copy).
+	self updateLastLevelSize.
+	
+	self decreaseIndentationIfLastInLevel.
+	treeLevelSize isEmpty ifFalse: [self decreaseIndentationIfLastInLevel].
+	! !
+
+
+!StructuredSummaryReport methodsFor: 'report' stamp: 'AM 11/16/2020 01:14:42'!
+report
+
+	account reportTo: self.
+	^structure.! !
+
+
+
+!classDefinition: #SummaryReport category: 'Portfolio-Solucion'!
+AccountReports subclass: #SummaryReport
+	instanceVariableNames: 'summaryCollection'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!SummaryReport methodsFor: 'report - private' stamp: 'AM 11/14/2020 17:24:57'!
+addStringRepresentationToSummary: aTransaction
+
+	summaryCollection add: (aTransaction class asString), ' for ', aTransaction value asString.! !
+
+!SummaryReport methodsFor: 'report - private' stamp: 'AM 11/14/2020 17:25:19'!
+handleDeposit: aDeposit
+
+	self addStringRepresentationToSummary: aDeposit.! !
+
+!SummaryReport methodsFor: 'report - private' stamp: 'AM 11/15/2020 23:36:44'!
+handlePortfolio: aPortfolio
+! !
+
+!SummaryReport methodsFor: 'report - private' stamp: 'AM 11/15/2020 23:35:20'!
+handleReceptiveAccount: aReceptiveAccount
+! !
+
+!SummaryReport methodsFor: 'report - private' stamp: 'AM 11/14/2020 17:25:35'!
+handleTransferDeposit: aTransferDeposit
+
+	self addStringRepresentationToSummary: aTransferDeposit.! !
+
+!SummaryReport methodsFor: 'report - private' stamp: 'AM 11/14/2020 17:25:49'!
+handleTransferWithdraw: aTransferWithdraw
+
+	self addStringRepresentationToSummary: aTransferWithdraw.! !
+
+!SummaryReport methodsFor: 'report - private' stamp: 'AM 11/14/2020 17:25:59'!
+handleWithdraw: aWithdraw
+
+	self addStringRepresentationToSummary: aWithdraw.! !
+
+
+!SummaryReport methodsFor: 'report' stamp: 'AM 11/15/2020 23:36:08'!
+report
+
+	account reportTo: self.
+	summaryCollection add: 'Balance = ', account balance asString.
+	^summaryCollection.! !
+
+
+!SummaryReport methodsFor: 'initialization' stamp: 'AM 11/15/2020 22:56:20'!
+initialize
+
+	summaryCollection := OrderedCollection new.! !
+
+
+!classDefinition: #TransferNetReport category: 'Portfolio-Solucion'!
+AccountReports subclass: #TransferNetReport
+	instanceVariableNames: 'netTotal'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!TransferNetReport methodsFor: 'initialization' stamp: 'AM 11/15/2020 22:55:56'!
+initialize
+
+	netTotal := 0.! !
+
+
+!TransferNetReport methodsFor: 'report - private' stamp: 'AM 11/14/2020 17:45:13'!
+handleDeposit: aDepositTransaction
+	
+	"Deposits dont affect transfer net"! !
+
+!TransferNetReport methodsFor: 'report - private' stamp: 'AM 11/15/2020 23:37:05'!
+handlePortfolio: aPortfolio
+	
+	! !
+
+!TransferNetReport methodsFor: 'report - private' stamp: 'AM 11/15/2020 23:37:39'!
+handleReceptiveAccount: aReceptiveAccount
+	
+	! !
+
+!TransferNetReport methodsFor: 'report - private' stamp: 'AM 11/14/2020 17:39:56'!
+handleTransferDeposit: aTransferWithdraw
+
+	netTotal := netTotal + aTransferWithdraw value.! !
+
+!TransferNetReport methodsFor: 'report - private' stamp: 'AM 11/14/2020 17:37:37'!
+handleTransferWithdraw: aTransferWithdraw
+
+	netTotal := netTotal - aTransferWithdraw value.! !
+
+!TransferNetReport methodsFor: 'report - private' stamp: 'AM 11/14/2020 17:45:04'!
+handleWithdraw: aWithdrawTransaction
+	
+	"Withdraws dont affect transfer net"! !
+
+
+!TransferNetReport methodsFor: 'report' stamp: 'AM 11/15/2020 23:37:57'!
+report
+
+	account reportTo: self.
+	^netTotal.! !
+
 
 !classDefinition: #AccountTransaction category: 'Portfolio-Solucion'!
 Object subclass: #AccountTransaction
@@ -795,6 +1320,12 @@ affectBalance: aBalance
 reportTo: aReport
 
 	aReport perform: ('handle', self class asString,':') asSymbol with: self.! !
+
+
+!AccountTransaction methodsFor: 'initialization' stamp: 'AM 11/15/2020 23:25:12'!
+initializeFor: anAccount
+	
+	self subclassResponsibility.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -836,11 +1367,6 @@ value
 affectBalance: aBalance
 
 	^aBalance + value ! !
-
-!Deposit methodsFor: 'balance' stamp: 'AM 11/14/2020 15:16:11'!
-stringRep
-
-	^'Deposit for ', value asString.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -891,15 +1417,10 @@ TransferTransactions subclass: #TransferDeposit
 	poolDictionaries: ''
 	category: 'Portfolio-Solucion'!
 
-!TransferDeposit methodsFor: 'as yet unclassified' stamp: 'AM 11/9/2020 21:11:46'!
+!TransferDeposit methodsFor: 'balance' stamp: 'AM 11/9/2020 21:11:46'!
 affectBalance: aBalance
 
 	^aBalance + transfer amount.! !
-
-!TransferDeposit methodsFor: 'as yet unclassified' stamp: 'AM 11/14/2020 15:26:44'!
-stringRep
-
-	^'Transfer deposit for ', self value asString. ! !
 
 
 !classDefinition: #TransferWithdraw category: 'Portfolio-Solucion'!
@@ -909,15 +1430,10 @@ TransferTransactions subclass: #TransferWithdraw
 	poolDictionaries: ''
 	category: 'Portfolio-Solucion'!
 
-!TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'AM 11/9/2020 21:12:45'!
+!TransferWithdraw methodsFor: 'balance' stamp: 'AM 11/9/2020 21:12:45'!
 affectBalance: aBalance
 
 	^aBalance - transfer amount.! !
-
-!TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'AM 11/14/2020 15:26:40'!
-stringRep
-
-	^'Transfer withdraw for ', self value asString. ! !
 
 
 !classDefinition: #Withdraw category: 'Portfolio-Solucion'!
@@ -944,12 +1460,6 @@ affectBalance: aBalance
 
 	^aBalance - value! !
 
-
-!Withdraw methodsFor: 'as yet unclassified' stamp: 'AM 11/14/2020 15:26:48'!
-stringRep
-
-	^'Withdraw for ', value asString. ! !
-
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Withdraw class' category: 'Portfolio-Solucion'!
@@ -960,123 +1470,6 @@ Withdraw class
 for: aValue
 
 	^ self new initializeFor: aValue ! !
-
-
-!classDefinition: #Reports category: 'Portfolio-Solucion'!
-Object subclass: #Reports
-	instanceVariableNames: 'account'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio-Solucion'!
-
-!Reports methodsFor: 'initialization' stamp: 'AM 11/9/2020 21:42:04'!
-initializeFor: anAccount
-
-	account := anAccount.! !
-
-!Reports methodsFor: 'initialization' stamp: 'AM 11/9/2020 21:43:01'!
-report
-
-	self subclassResponsibility.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Reports class' category: 'Portfolio-Solucion'!
-Reports class
-	instanceVariableNames: ''!
-
-!Reports class methodsFor: 'as yet unclassified' stamp: 'AM 11/9/2020 21:40:53'!
-for: anAccount
-
-	^self new initializeFor: anAccount.! !
-
-
-!classDefinition: #AccountSummary category: 'Portfolio-Solucion'!
-Reports subclass: #AccountSummary
-	instanceVariableNames: 'summaryCollection'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio-Solucion'!
-
-!AccountSummary methodsFor: 'report' stamp: 'AM 11/14/2020 17:24:57'!
-addStringRepresentationToSummary: aTransaction
-
-	summaryCollection add: (aTransaction class asString), ' for ', aTransaction value asString.! !
-
-!AccountSummary methodsFor: 'report' stamp: 'AM 11/14/2020 17:25:19'!
-handleDeposit: aDeposit
-
-	self addStringRepresentationToSummary: aDeposit.! !
-
-!AccountSummary methodsFor: 'report' stamp: 'AM 11/14/2020 17:25:35'!
-handleTransferDeposit: aTransferDeposit
-
-	self addStringRepresentationToSummary: aTransferDeposit.! !
-
-!AccountSummary methodsFor: 'report' stamp: 'AM 11/14/2020 17:25:49'!
-handleTransferWithdraw: aTransferWithdraw
-
-	self addStringRepresentationToSummary: aTransferWithdraw.! !
-
-!AccountSummary methodsFor: 'report' stamp: 'AM 11/14/2020 17:25:59'!
-handleWithdraw: aWithdraw
-
-	self addStringRepresentationToSummary: aWithdraw.! !
-
-!AccountSummary methodsFor: 'report' stamp: 'AM 11/14/2020 17:19:22'!
-report
-
-	account transactions do: [:aTransaction | aTransaction reportTo: self].
-	summaryCollection add: 'Balance = ', account balance asString.
-	^summaryCollection.! !
-
-
-!AccountSummary methodsFor: 'initialization' stamp: 'AM 11/14/2020 17:19:22'!
-initializeFor: anAccount
-
-	account := anAccount.
-	summaryCollection := OrderedCollection new.! !
-
-
-!classDefinition: #TransferNet category: 'Portfolio-Solucion'!
-Reports subclass: #TransferNet
-	instanceVariableNames: 'netTotal'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio-Solucion'!
-
-!TransferNet methodsFor: 'initialization' stamp: 'AM 11/14/2020 17:39:03'!
-initializeFor: anAccount
-
-	account := anAccount.
-	netTotal := 0.! !
-
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'AM 11/14/2020 17:45:13'!
-handleDeposit: aDepositTransaction
-	
-	"Deposits dont affect transfer net"! !
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'AM 11/14/2020 17:39:56'!
-handleTransferDeposit: aTransferWithdraw
-
-	netTotal := netTotal + aTransferWithdraw value.! !
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'AM 11/14/2020 17:37:37'!
-handleTransferWithdraw: aTransferWithdraw
-
-	netTotal := netTotal - aTransferWithdraw value.! !
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'AM 11/14/2020 17:45:04'!
-handleWithdraw: aWithdrawTransaction
-	
-	"Withdraws dont affect transfer net"! !
-
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'AM 11/14/2020 17:34:12'!
-report
-
-	account transactions do: [:aTransaction | aTransaction reportTo: self].
-	^netTotal.! !
 
 
 !classDefinition: #Transfer category: 'Portfolio-Solucion'!
