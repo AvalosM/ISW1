@@ -402,7 +402,7 @@ initializeForPriceCatalogue: aPriceCatalogue
 ! !
 
 
-!Cashier methodsFor: 'check out - private' stamp: 'AM 11/25/2020 21:28:56'!
+!Cashier methodsFor: 'value' stamp: 'AM 11/25/2020 21:28:56'!
 valueForCart: anItemCart
 	
 	^anItemCart valueFor: self.
@@ -410,7 +410,7 @@ valueForCart: anItemCart
 	
 	! !
 
-!Cashier methodsFor: 'check out - private' stamp: 'AM 11/25/2020 21:28:27'!
+!Cashier methodsFor: 'value' stamp: 'AM 11/25/2020 21:28:27'!
 valueForItem: anItem
 	
 	^priceCatalogue at: anItem.
