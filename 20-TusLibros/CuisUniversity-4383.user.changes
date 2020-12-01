@@ -31990,3 +31990,3243 @@ checkOutCart: aCartID charging: aCreditCard
 ----SNAPSHOT----(29 November 2020 16:57:47) CuisUniversity-4383.image priorSource: 17512888!
 
 ----QUIT----(29 November 2020 16:57:52) CuisUniversity-4383.image priorSource: 17563503!
+
+----STARTUP---- (30 November 2020 17:12:00) as C:\Users\Chara\Desktop\Facultad\Ingenieria 1\CUIS\CuisUniversity-4383.image!
+
+!ApiRestTest methodsFor: 'clientPassworValidation' stamp: 'AM 11/30/2020 18:11:22'!
+authenticate: aClientID withPassword: aPassword
+
+	clientValidationBehavior value: aClientID value: aPassword.! !
+
+!methodRemoval: ApiRestTest #validate:and: stamp: 'AM 11/30/2020 18:11:22'!
+validate: aClientID and: aPassword
+
+	clientValidationBehavior value: aClientID value: aPassword.!
+!ApiRest methodsFor: 'initialization' stamp: 'AM 11/30/2020 18:12:22'!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor authenticatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchanProcessor := aMerchantProcessor.
+	nextCartID := 0.
+	activeCarts := Dictionary new.
+	clientPasswordValidator := aClientPasswordValidator.! !
+!ApiRest class methodsFor: 'as yet unclassified' stamp: 'AM 11/30/2020 18:12:22' prior: 50879948!
+withCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator
+	
+	^self new initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor authenticatingClientsThrough: aClientPasswordValidator.! !
+
+!methodRemoval: ApiRest #initializeWithCatalogue:salesThrough:validatingClientsThrough: stamp: 'AM 11/30/2020 18:12:22'!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchanProcessor := aMerchantProcessor.
+	nextCartID := 0.
+	activeCarts := Dictionary new.
+	clientPasswordValidator := aClientPasswordValidator.!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 18:13:10'!
+ERROR!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 18:13:10'!
+ERROR!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 18:13:10'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:13:10'!
+ERROR!
+!ApiRest methodsFor: 'initialization' stamp: 'AM 11/30/2020 18:13:33'!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchanProcessor := aMerchantProcessor.
+	nextCartID := 0.
+	activeCarts := Dictionary new.
+	clientPasswordValidator := aClientPasswordValidator.! !
+!ApiRest class methodsFor: 'as yet unclassified' stamp: 'AM 11/30/2020 18:13:33' prior: 50880545!
+withCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator
+	
+	^self new initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator.! !
+
+!methodRemoval: ApiRest #initializeWithCatalogue:salesThrough:authenticatingClientsThrough: stamp: 'AM 11/30/2020 18:13:33'!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor authenticatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchanProcessor := aMerchantProcessor.
+	nextCartID := 0.
+	activeCarts := Dictionary new.
+	clientPasswordValidator := aClientPasswordValidator.!
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 18:14:48' prior: 50880430!
+test04checksOutCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	
+	expected := Bag with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 18:15:14'!
+ERROR!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 18:15:14'!
+ERROR!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 18:15:14'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:15:14'!
+ERROR!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 18:15:24'!
+ERROR!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 18:15:24'!
+ERROR!
+!ApiRest methodsFor: 'cart' stamp: 'AM 11/30/2020 18:16:28' prior: 50880173!
+createCartFor: aClientID withPassword: aPassword
+	
+	clientPasswordValidator authenticate: aClientID withPassword: aPassword.
+	activeCarts at: nextCartID put: (Cart acceptingItemsOf: priceCatalogue).
+	nextCartID := nextCartID + 1.
+	
+	^nextCartID - 1.
+	
+	! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 18:18:04'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 18:18:04'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 18:18:04'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:18:04'!
+ERROR!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:18:04'!
+ERROR!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 18:18:07'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 18:18:07'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 18:18:07'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:18:07'!
+ERROR!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:18:07'!
+ERROR!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 18:18:10'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 18:18:10'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 18:18:10'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:18:10'!
+ERROR!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:18:10'!
+ERROR!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 18:18:22'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 18:18:22'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 18:18:22'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:18:22'!
+ERROR!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:18:22'!
+ERROR!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 18:18:54'!
+PASSED!
+
+!classDefinition: #ApiRest category: 'TusLibros' stamp: 'AM 11/30/2020 18:26:11'!
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue merchanProcessor activeCarts nextCartID merchantProcessor clientPasswordValidator salesBook ownerForCart'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!ApiRest methodsFor: 'cart' stamp: 'AM 11/30/2020 18:26:10' prior: 50880658!
+createCartFor: aClientID withPassword: aPassword
+	
+	clientPasswordValidator authenticate: aClientID withPassword: aPassword.
+	activeCarts at: nextCartID put: (Cart acceptingItemsOf: priceCatalogue).
+	ownerForCart at: nextCartID put: aClientID.
+	nextCartID := nextCartID + 1.
+	
+	^nextCartID - 1.
+	
+	! !
+!ApiRest methodsFor: 'initialization' stamp: 'AM 11/30/2020 18:26:32' prior: 50880582!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchanProcessor := aMerchantProcessor.
+	nextCartID := 0.
+	activeCarts := Dictionary new.
+	ownerForCart := Dictionary new.
+	clientPasswordValidator := aClientPasswordValidator.! !
+!ApiRest methodsFor: 'check out' stamp: 'AM 11/30/2020 18:31:38' prior: 50880500!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier clientSalesBook |
+	
+	clientSalesBook := salesBook at: (ownerForCart at: aCartID).
+	
+	cashier := Cashier toCheckout: (activeCarts at: aCartID ) charging: aCreditCard throught: merchanProcessor on: (Date today) registeringOn: clientSalesBook.
+	
+	cashier checkOut.
+	 ! !
+
+!methodRemoval: ApiRest #initializeWithCatalogue:salesThrough: stamp: 'AM 11/30/2020 18:31:56'!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchanProcessor 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchanProcessor := aMerchanProcessor.
+	nextCartID := 0.
+	activeCarts := Dictionary new.!
+!ApiRest methodsFor: 'initialization' stamp: 'AM 11/30/2020 18:32:20' prior: 50880757!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchanProcessor := aMerchantProcessor.
+	nextCartID := 0.
+	salesBook := Dictionary new.
+	activeCarts := Dictionary new.
+	ownerForCart := Dictionary new.
+	clientPasswordValidator := aClientPasswordValidator.! !
+!ApiRest methodsFor: 'check out' stamp: 'AM 11/30/2020 18:35:48' prior: 50880771!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook |
+	
+	cartOwner := ownerForCart at: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent:[salesBook at: cartOwner put: OrderedCollection new.
+												salesBook at: cartOwner.].
+	
+	cashier := Cashier toCheckout: (activeCarts at: aCartID ) charging: aCreditCard throught: merchanProcessor on: (Date today) registeringOn: clientSalesBook.
+	
+	cashier checkOut.
+	 ! !
+
+| dictionary |
+
+
+dictionary := Dictionary new.
+
+dictionary at: '1' put: 1.!
+!ApiRest methodsFor: 'check out' stamp: 'AM 11/30/2020 18:37:28' prior: 50880809!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook |
+	
+	cartOwner := ownerForCart at: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent:[salesBook at: cartOwner put: OrderedCollection new].
+	
+	cashier := Cashier toCheckout: (activeCarts at: aCartID ) charging: aCreditCard throught: merchanProcessor on: (Date today) registeringOn: clientSalesBook.
+	
+	cashier checkOut.
+	 ! !
+!ApiRest methodsFor: 'check out' stamp: 'AM 11/30/2020 18:37:32' prior: 50880829!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook |
+	
+	cartOwner := ownerForCart at: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new].
+	
+	cashier := Cashier toCheckout: (activeCarts at: aCartID ) charging: aCreditCard throught: merchanProcessor on: (Date today) registeringOn: clientSalesBook.
+	
+	cashier checkOut.
+	 ! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:38:46'!
+ERROR!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:38:46'!
+ERROR!
+!ApiRest methodsFor: 'as yet unclassified' stamp: 'AM 11/30/2020 18:38:58'!
+listPurchasesFor: aString 
+	self shouldBeImplemented.! !
+!ApiRest methodsFor: 'as yet unclassified' stamp: 'AM 11/30/2020 18:39:40' prior: 50880867!
+listPurchasesFor: aClientID
+
+	^salesBook at: aClientID.! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:39:47'!
+FAILURE!
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 18:40:37' prior: 50880620!
+test04checksOutCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	
+	expected := OrderedCollection with: 'validBook' with: 1 with: 1000.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 18:41:07' prior: 50880880!
+test04checksOutCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	
+	expected := OrderedCollection with: 'validBook' with: 1 with: 10.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+Object subclass: #Sale
+	instanceVariableNames: 'items total'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classDefinition: #Sale category: 'TusLibros' stamp: 'AM 11/30/2020 18:42:32'!
+Object subclass: #Sale
+	instanceVariableNames: 'items total'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!Sale class methodsFor: 'instance creation' stamp: 'AM 11/30/2020 18:44:44'!
+forCart: aCart
+
+	! !
+
+!classDefinition: 'Sale class' category: 'TusLibros' stamp: 'AM 11/30/2020 18:45:26'!
+Sale class
+	instanceVariableNames: 'soldItems'!
+
+!classDefinition: 'Sale class' category: 'TusLibros' stamp: 'AM 11/30/2020 18:45:28'!
+Sale class
+	instanceVariableNames: 'soldItems total'!
+!Sale class methodsFor: 'instance creation' stamp: 'AM 11/30/2020 18:45:25' prior: 50880930!
+forCart: aCart
+	
+	soldItems := aCart items.
+	total := aCart .
+	! !
+!Sale class methodsFor: 'instance creation' stamp: 'AM 11/30/2020 18:45:45' prior: 50880943!
+forCart: aCart
+	
+	soldItems := aCart items.
+	total := aCart total.
+	! !
+!Sale methodsFor: 'items' stamp: 'AM 11/30/2020 18:46:33'!
+soldItems
+
+	^items copy.! !
+
+Sale class
+	instanceVariableNames: ''!
+
+!classDefinition: 'Sale class' category: 'TusLibros' stamp: 'AM 11/30/2020 18:46:56'!
+Sale class
+	instanceVariableNames: ''!
+!Sale class methodsFor: 'instance creation' stamp: 'AM 11/30/2020 18:47:53' prior: 50880948!
+forCart: aCart
+	
+	^self new initializeSaleOf: aCart items for: aCart total.
+	! !
+
+!classDefinition: #Sale category: 'TusLibros' stamp: 'AM 11/30/2020 18:48:52'!
+Object subclass: #Sale
+	instanceVariableNames: 'items total soldItems'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!Sale methodsFor: 'initialization' stamp: 'AM 11/30/2020 18:48:51'!
+initializeSaleOf: aSoldItemsCollection for: aSaleTotal
+
+	total := aSaleTotal.
+	soldItems := aSoldItemsCollection.! !
+!Sale methodsFor: 'items' stamp: 'AM 11/30/2020 18:49:03' prior: 50880953!
+soldItems
+
+	^soldItems copy.! !
+
+Object subclass: #Sale
+	instanceVariableNames: 'total soldItems'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classDefinition: #Sale category: 'TusLibros' stamp: 'AM 11/30/2020 18:49:14'!
+Object subclass: #Sale
+	instanceVariableNames: 'total soldItems'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!methodRemoval: Sale #initializeTotal: stamp: 'AM 11/30/2020 18:49:25'!
+initializeTotal: aTotal
+
+	total := aTotal !
+
+!methodRemoval: Sale class #of: stamp: 'AM 11/30/2020 18:49:29'!
+of: aTotal
+
+	"should assert total is not negative or 0!!"
+	^self new initializeTotal: aTotal !
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 11/30/2020 18:49:49' prior: 50879183!
+createSale
+
+	^ Sale forCart: cart.
+! !
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 18:53:35' prior: 50880900!
+test04checksOutCorrectly
+
+	| api cartID expected cart|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	cart := Cart acceptingItemsOf: testObjectsFactory defaultCatalog.
+	cart add: (testObjectsFactory itemSellByTheStore).
+	
+	expected := Sale forCart: cart.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:53:40'!
+ERROR!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:53:40'!
+ERROR!
+!Cart methodsFor: 'item queries' stamp: 'AM 11/30/2020 18:54:03'!
+items
+
+	^items copy.! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:54:51'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:54:51'!
+FAILURE!
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 18:55:16' prior: 50881008!
+test04checksOutCorrectly
+
+	| api cartID expected cart|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	cart := Cart acceptingItemsOf: testObjectsFactory defaultCatalog.
+	cart add: (testObjectsFactory itemSellByTheStore).
+	
+	expected := OrderedCollection with: (Sale forCart: cart).
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:55:19'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 18:55:19'!
+FAILURE!
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 11/30/2020 18:59:02' prior: 50881004!
+createSale
+
+	^ cart items add: total.
+! !
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 19:00:09' prior: 50881046!
+test04checksOutCorrectly
+
+	| api cartID expected cart|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	cart := Cart acceptingItemsOf: testObjectsFactory defaultCatalog.
+	cart add: (testObjectsFactory itemSellByTheStore).
+	
+	expected := OrderedCollection with: (testObjectsFactory itemSellByTheStore) with: 10.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:00:28'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:00:28'!
+FAILURE!
+
+self items!
+
+^ cart items add: total!
+
+cart items!
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 11/30/2020 19:04:27' prior: 50881075!
+createSale
+
+	^ (cart items)add: total.
+! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:04:28'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:04:36'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:04:36'!
+FAILURE!
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 11/30/2020 19:05:28' prior: 50881111!
+createSale
+
+	^ ((cart items)addLast: total).
+! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:05:34'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:05:34'!
+FAILURE!
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 11/30/2020 19:06:40' prior: 50881124!
+createSale
+	
+	| sale |
+	sale := (cart items) addLast: total.
+	^sale.
+! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:06:45'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:06:45'!
+FAILURE!
+
+cart items!
+
+self add: 10!
+
+self!
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 11/30/2020 19:09:42' prior: 50881135!
+createSale
+	
+	
+	^OrderedCollection with: (cart items) with: total.
+! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:09:43'!
+FAILURE!
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 19:10:48' prior: 50881079!
+test04checksOutCorrectly
+
+	| api cartID expected cart|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	cart := Cart acceptingItemsOf: testObjectsFactory defaultCatalog.
+	cart add: (testObjectsFactory itemSellByTheStore).
+	
+	expected := OrderedCollection with: (OrderedCollection with: testObjectsFactory itemSellByTheStore) with: 10.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:10:52'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:10:52'!
+FAILURE!
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 19:12:50' prior: 50881155!
+test04checksOutCorrectly
+
+	| api cartID expected expectedItems cart|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	cart := Cart acceptingItemsOf: testObjectsFactory defaultCatalog.
+	cart add: (testObjectsFactory itemSellByTheStore).
+	
+	expectedItems := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	expected := OrderedCollection with: expectedItems with: 10.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:12:54'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:12:54'!
+FAILURE!
+
+^OrderedCollection with: (cart items) with: total!
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 19:14:21' prior: 50881186!
+test04checksOutCorrectly
+
+	| api cartID expected expectedItems cart|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	cart := Cart acceptingItemsOf: testObjectsFactory defaultCatalog.
+	cart add: (testObjectsFactory itemSellByTheStore).
+	
+	expectedItems := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	expected := OrderedCollection with: (OrderedCollection with: expectedItems with: 10).
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:14:30'!
+PASSED!
+!Cashier methodsFor: 'checkout' stamp: 'AM 11/30/2020 19:24:36' prior: 50879196!
+checkOut
+	
+	| sale |
+	self calculateTotal.
+	self debitTotal.
+	sale := self registerSale.
+
+	^ sale.! !
+!ApiRest methodsFor: 'check out' stamp: 'AM 11/30/2020 19:24:55' prior: 50880845!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook |
+	
+	cartOwner := ownerForCart at: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new].
+	
+	cashier := Cashier toCheckout: (activeCarts at: aCartID ) charging: aCreditCard throught: merchanProcessor on: (Date today) registeringOn: clientSalesBook.
+	
+	^cashier checkOut.
+	 ! !
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 19:25:25' prior: 50881220!
+test04checksOutCorrectly
+
+	| api cartID expected cart|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 19:26:08' prior: 50881272!
+test04checksOutCorrectly
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	self assert: (api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard) equals: (api listPurchasesFor: 'client'). ! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:26:16'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:26:17'!
+FAILURE!
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 11/30/2020 19:26:49' prior: 50879178!
+registerSale
+
+	^salesBook add: self createSale! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:26:55'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:26:55'!
+FAILURE!
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 19:27:51' prior: 50881290!
+test04checksOutCorrectly
+
+	| api cartID expected|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	expected := OrderedCollection with: (api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard).
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:27:54'!
+PASSED!
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 19:28:35' prior: 50881323!
+test04checksOutCorrectly
+
+	| api cartID expected|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	expected := OrderedCollection with: (api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard).
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+!ApiRest methodsFor: 'cart' stamp: 'AM 11/30/2020 19:29:30' prior: 50879848!
+listCart: aCartId
+	
+	^activeCarts at: aCartId items.! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 19:29:36'!
+ERROR!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 19:29:36'!
+ERROR!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 19:29:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:29:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 19:29:40'!
+ERROR!
+!ApiRest methodsFor: 'cart' stamp: 'AM 11/30/2020 19:29:56' prior: 50881364!
+listCart: aCartId
+	
+	^(activeCarts at: aCartId) items.! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 19:30:01'!
+FAILURE!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 19:30:01'!
+FAILURE!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 19:30:01'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:30:01'!
+PASSED!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 19:30:03'!
+FAILURE!
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 19:30:45' prior: 50880328!
+test01newCartShouldBeEmpty
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	expected := OrderedCollection new.
+	
+	self assert: expected equals: (api listCart: cartID).! !
+!ApiRestTest methodsFor: 'tests' stamp: 'AM 11/30/2020 19:30:55' prior: 50880311!
+test02itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 19:30:58'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 19:30:58'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 19:30:59'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:30:59'!
+PASSED!
+
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts nextCartID merchantProcessor clientPasswordValidator salesBook ownerForCart'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classDefinition: #ApiRest category: 'TusLibros' stamp: 'AM 11/30/2020 19:32:01'!
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts nextCartID merchantProcessor clientPasswordValidator salesBook ownerForCart'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 19:32:04'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 19:32:04'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 19:32:04'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:32:04'!
+PASSED!
+!ApiRest methodsFor: 'check out' stamp: 'AM 11/30/2020 19:32:29' prior: 50881256!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook |
+	
+	cartOwner := ownerForCart at: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new].
+	
+	cashier := Cashier toCheckout: (activeCarts at: aCartID ) charging: aCreditCard throught: merchantProcessor on: (Date today) registeringOn: clientSalesBook.
+	
+	^cashier checkOut.
+	 ! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 19:32:43'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 19:32:43'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 19:32:43'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:32:43'!
+ERROR!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:32:43'!
+ERROR!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 19:33:05'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 19:33:05'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 19:33:05'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:33:05'!
+ERROR!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:33:05'!
+ERROR!
+!ApiRest methodsFor: 'initialization' stamp: 'AM 11/30/2020 19:33:29' prior: 50880794!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchantProcessor := aMerchantProcessor.
+	nextCartID := 0.
+	salesBook := Dictionary new.
+	activeCarts := Dictionary new.
+	ownerForCart := Dictionary new.
+	clientPasswordValidator := aClientPasswordValidator.! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 11/30/2020 19:33:32'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 11/30/2020 19:33:32'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 11/30/2020 19:33:32'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 11/30/2020 19:33:32'!
+PASSED!
+
+----QUIT----(30 November 2020 20:11:49) CuisUniversity-4383.image priorSource: 17563597!
+
+----STARTUP---- (1 December 2020 15:33:19) as C:\Users\Chara\Desktop\Facultad\Ingenieria 1\CUIS\CuisUniversity-4383.image!
+
+
+Object subclass: #xxx
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+Object subclass: #Temp
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classDefinition: #Temp category: 'TusLibros' stamp: 'AM 12/1/2020 15:39:02'!
+Object subclass: #Temp
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!ApiRest methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:44:08' prior: 50881526!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchantProcessor := aMerchantProcessor.
+	nextCartID := 0.
+	salesBook := Dictionary new.
+	activeCarts := Dictionary new.
+	ownerForCart := Dictionary new.
+	clientPasswordValidator := aClientPasswordValidator.! !
+
+!classDefinition: #Temp category: 'TusLibros' stamp: 'AM 12/1/2020 15:45:13'!
+Object subclass: #Temp
+	instanceVariableNames: 'activeCarts'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:45:11' overrides: 16896425!
+initialize
+	
+	activeCarts := Dictionary new.
+	! !
+!ApiRest methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:45:58' prior: 50881574!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchantProcessor := aMerchantProcessor.
+	nextCartID := 0.
+	salesBook := Dictionary new.
+	activeCarts := Dictionary new.
+	clientPasswordValidator := aClientPasswordValidator.! !
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:47:03' prior: 50881596 overrides: 16896425!
+initialize
+	
+	"Keys son clientID, podemos obtener client id para carrito, value carrito"
+	activeCarts := Dictionary new.
+	! !
+
+!classDefinition: #Temp category: 'TusLibros' stamp: 'AM 12/1/2020 15:47:45'!
+Object subclass: #Temp
+	instanceVariableNames: 'activeCarts cartLastActionTimestamp'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:47:44' prior: 50881615 overrides: 16896425!
+initialize
+	
+	"Keys son clientID, podemos obtener client id para carrito, value carrito"
+	activeCarts := Dictionary new.
+	cartLastActionTimestamp := Dictionary new.! !
+
+!classDefinition: #Temp category: 'TusLibros' stamp: 'AM 12/1/2020 15:48:43'!
+Object subclass: #Temp
+	instanceVariableNames: 'activeCarts cartLastActionTimestamp salesBook'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:48:42' prior: 50881630 overrides: 16896425!
+initialize
+	
+	"Keys son clientID, podemos obtener client id para carrito, value carrito"
+	activeCarts := Dictionary new.
+	cartLastActionTimestamp := Dictionary new.
+	salesBook := Dictionary new.! !
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:53:26'!
+cartForClient: aClientID
+	
+	activeCarts at: aClientID ifAbsent: [].! !
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:54:10' prior: 50881656!
+cartForClient: aClientID
+	
+	^activeCarts at: aClientID ifAbsent: [].! !
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:54:35'!
+salesForClient: aClientID
+	
+	^salesBook .! !
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:55:48' prior: 50881666!
+salesForClient: aClientID
+	
+	^salesBook at: aClientID ifAbsent: [].! !
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 15:57:04'!
+clientForCart: aCart
+	
+	^activeCarts keyAtValue: aCart ifAbsent: [].! !
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 16:02:04' prior: 50881647 overrides: 16896425!
+initialize
+	
+	"Keys son clientID, podemos obtener client id para carrito, value carrito"
+	activeCarts := Dictionary new.
+	cartLastActionTimestamp := Dictionary new.
+	salesBook := Dictionary new.! !
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 16:03:26'!
+addCart: aCart forClient: aClientID
+
+! !
+
+!classDefinition: #Temp category: 'TusLibros' stamp: 'AM 12/1/2020 16:06:29'!
+Object subclass: #Temp
+	instanceVariableNames: 'activeCarts cartLastActionTimestamp salesBook nextCartID'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 16:06:27' prior: 50881690!
+addCart: aCart forClient: aClientID
+
+	activeCarts at: nextCartID put: aClientID->aCart.
+	nextCartID := nextCartID + 1.! !
+
+!methodRemoval: Temp #cartForClient: stamp: 'AM 12/1/2020 16:07:46'!
+cartForClient: aClientID
+	
+	^activeCarts at: aClientID ifAbsent: [].!
+
+!methodRemoval: Temp #clientForCart: stamp: 'AM 12/1/2020 16:08:20'!
+clientForCart: aCart
+	
+	^activeCarts keyAtValue: aCart ifAbsent: [].!
+
+!methodRemoval: Temp #salesForClient: stamp: 'AM 12/1/2020 16:08:33'!
+salesForClient: aClientID
+	
+	^salesBook at: aClientID ifAbsent: [].!
+
+x _ #myVar->'hello'.		"Create an association"
+y _ x key.
+y _ x value.
+!
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 16:09:26'!
+cartWithID: aCartID
+
+	activeCarts at: aCartID value.! !
+!Temp methodsFor: 'initialization' stamp: 'AM 12/1/2020 16:10:00'!
+ownerIDForCart: aCartID
+
+	activeCarts at: aCartID key.! !
+
+!classRenamed: #Temp as: #CartManager stamp: 'AM 12/1/2020 16:10:59'!
+Smalltalk renameClassNamed: #Temp as: #CartManager!
+
+----QUIT----(1 December 2020 16:11:19) CuisUniversity-4383.image priorSource: 17596878!
+
+----STARTUP---- (1 December 2020 16:11:28) as C:\Users\Chara\Desktop\Facultad\Ingenieria 1\CUIS\CuisUniversity-4383.image!
+
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:13:55'!
+addToCart: aCartID
+
+	activeCarts at: aCartID ifAbsent: [].! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:14:56'!
+addToCart: aCartID item: anItem quantity: aQuantity
+
+	activeCarts at: aCartID ifAbsent: [].! !
+
+!methodRemoval: CartManager #addToCart: stamp: 'AM 12/1/2020 16:15:15'!
+addToCart: aCartID
+
+	activeCarts at: aCartID ifAbsent: [].!
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:15:42' prior: 50881747!
+addToCart: aCartID item: anItem quantity: aQuantity
+
+	| cart |
+	
+	cart := activeCarts at: aCartID ifAbsent: [].
+	cart ! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:16:47' prior: 50881757!
+addToCart: aCartID item: anItem quantity: aQuantity
+
+	| cart |
+	
+	cart := activeCarts at: aCartID ifAbsent: [].
+	cart add: anItem of: aQuantity.! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:17:00' prior: 50881764!
+addToCart: aCartID item: anItem quantity: aQuantity
+
+	| cart |
+	
+	cart := activeCarts at: aCartID ifAbsent: [] value.
+	cart add: anItem of: aQuantity.! !
+
+!classDefinition: #ApiRest category: 'TusLibros' stamp: 'AM 12/1/2020 16:18:06'!
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts nextCartID merchantProcessor clientPasswordValidator salesBook ownerForCart cartManager'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!ApiRest methodsFor: 'cart' stamp: 'AM 12/1/2020 16:18:03' prior: 50880744!
+createCartFor: aClientID withPassword: aPassword
+	
+	clientPasswordValidator authenticate: aClientID withPassword: aPassword.
+	cartManager addCart: (Cart acceptingItemsOf: priceCatalogue) forClient: aClientID.
+	ownerForCart at: nextCartID put: aClientID.
+	nextCartID := nextCartID + 1.
+	
+	^nextCartID - 1.
+	
+	! !
+!ApiRest methodsFor: 'cart' stamp: 'AM 12/1/2020 16:18:18' prior: 50881790!
+createCartFor: aClientID withPassword: aPassword
+	
+	clientPasswordValidator authenticate: aClientID withPassword: aPassword.
+	cartManager addCart: (Cart acceptingItemsOf: priceCatalogue) forClient: aClientID.
+	
+	^nextCartID - 1.
+	
+	! !
+!ApiRest methodsFor: 'cart' stamp: 'AM 12/1/2020 16:18:59' prior: 50881803!
+createCartFor: aClientID withPassword: aPassword
+	
+	clientPasswordValidator authenticate: aClientID withPassword: aPassword.
+	^cartManager addCart: (Cart acceptingItemsOf: priceCatalogue) forClient: aClientID.
+	
+	
+	
+	! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:19:51' prior: 50881702!
+addCart: aCart forClient: aClientID
+
+	| cartID |
+	
+	cartID := nextCartID.
+	nextCartID := nextCartID + 1.
+	activeCarts at: nextCartID put: aClientID->aCart.
+	
+	^cartID.
+	! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:20:06' prior: 50881823!
+addCart: aCart forClient: aClientID
+
+	| cartID |
+	
+	cartID := nextCartID.
+	nextCartID := nextCartID + 1
+	.
+	activeCarts at: cartID put: aClientID->aCart.
+	^cartID.
+	! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:20:11' prior: 50881831!
+addCart: aCart forClient: aClientID
+
+	| cartID |
+	
+	cartID := nextCartID.
+	nextCartID := nextCartID + 1.
+	
+	activeCarts at: cartID put: aClientID->aCart.
+	^cartID.
+	! !
+!ApiRest methodsFor: 'initialization' stamp: 'AM 12/1/2020 16:20:56' prior: 50881601!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchantProcessor := aMerchantProcessor.
+	salesBook := Dictionary new.
+	cartManager := CartManager new.
+	clientPasswordValidator := aClientPasswordValidator.! !
+!ApiRest methodsFor: 'cart' stamp: 'AM 12/1/2020 16:21:40' prior: 50879822!
+addToCart: aCartID item: anItemID quantity: aQuantity
+
+	cartManager addToCart: aCartID item: anItemID quantity: aQuantity.
+	
+	! !
+!ApiRest methodsFor: 'check out' stamp: 'AM 12/1/2020 16:24:52' prior: 50881479!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook cartToCheckOut |
+	
+	cartToCheckOut := cartManager cartWithID: aCartID.
+	cartOwner := cartManager ownerIDForCart: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new].
+	
+	cashier := Cashier toCheckout: cartManager  charging: aCreditCard throught: merchantProcessor on: (Date today) registeringOn: clientSalesBook.
+	
+	^cashier checkOut.
+	 ! !
+!ApiRest methodsFor: 'check out' stamp: 'AM 12/1/2020 16:25:06' prior: 50881867!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook cartToCheckOut |
+	
+	cartToCheckOut := cartManager cartWithID: aCartID.
+	cartOwner := cartManager ownerIDForCart: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new].
+	
+	cashier := Cashier toCheckout: cartToCheckOut charging: aCreditCard throught: merchantProcessor on: (Date today) registeringOn: clientSalesBook.
+	
+	^cashier checkOut.
+	 ! !
+!ApiRest methodsFor: 'check out' stamp: 'AM 12/1/2020 16:25:09' prior: 50881885!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook cartToCheckOut |
+	
+	cartToCheckOut := cartManager cartWithID: aCartID.
+	cartOwner := cartManager ownerIDForCart: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new].
+	
+	cashier := Cashier toCheckout: cartToCheckOut charging: aCreditCard throught: merchantProcessor on: (Date today) registeringOn: clientSalesBook.
+	^cashier checkOut.
+	 ! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:26:30'!
+listCart: aCartID
+
+	activeCarts at: 	aCartID value.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:27:08' prior: 50881921!
+listCart: aCartID
+	
+	| cartToList |
+	
+	cartToList := activeCarts at: 	aCartID value.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:27:24' prior: 50881926!
+listCart: aCartID
+	
+	| cartToList |
+	
+	cartToList := activeCarts at: 	aCartID value.
+	
+	! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:27:49' prior: 50881932!
+listCart: aCartID
+	
+	| cartToList |
+	
+	cartToList := activeCarts at: 	aCartID value.
+	
+	^cartToList items.! !
+!CartManager methodsFor: 'testing' stamp: 'AM 12/1/2020 16:29:10'!
+hasNoActiveCarts
+	
+	^activeCarts isEmpty.! !
+!ApiRest methodsFor: 'cart' stamp: 'AM 12/1/2020 16:29:21' prior: 50880280!
+hasNoActiveCarts
+	
+	^cartManager hasNoActiveCarts.! !
+!ApiRest methodsFor: 'cart' stamp: 'AM 12/1/2020 16:29:45' prior: 50881384!
+listCart: aCartId
+	
+	^cartManager listCart: aCartId.! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 16:30:12'!
+ERROR!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:30:12'!
+ERROR!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/1/2020 16:30:12'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 12/1/2020 16:30:12'!
+ERROR!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 16:30:19'!
+ERROR!
+!CartManager methodsFor: 'initialization' stamp: 'AM 12/1/2020 16:30:39' prior: 50881681 overrides: 16896425!
+initialize
+	
+	"Keys son clientID, podemos obtener client id para carrito, value carrito"
+	activeCarts := Dictionary new.
+	cartLastActionTimestamp := Dictionary new.
+	salesBook := Dictionary new.
+	nextCartID := 0.! !
+!CartManager methodsFor: 'initialization' stamp: 'AM 12/1/2020 16:30:44' prior: 50881974 overrides: 16896425!
+initialize
+	
+	activeCarts := Dictionary new.
+	cartLastActionTimestamp := Dictionary new.
+	salesBook := Dictionary new.
+	nextCartID := 0.! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 16:30:48'!
+ERROR!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:30:48'!
+ERROR!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/1/2020 16:30:48'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 12/1/2020 16:30:48'!
+ERROR!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 16:30:51'!
+ERROR!
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:31:22' prior: 50881728!
+ownerIDForCart: aCartID
+
+	^(activeCarts at: aCartID) key.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:31:32' prior: 50881938!
+listCart: aCartID
+	
+	| cartToList |
+	
+	cartToList := (activeCarts at: 	aCartID) value.
+	
+	^cartToList items.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:31:43' prior: 50881724!
+cartWithID: aCartID
+
+	^(activeCarts at: aCartID) value.! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 16:31:57'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:31:57'!
+ERROR!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/1/2020 16:31:57'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 12/1/2020 16:31:57'!
+ERROR!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:32:00'!
+ERROR!
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:32:18' prior: 50881772!
+addToCart: aCartID item: anItem quantity: aQuantity
+
+	| cart |
+	
+	cart := (activeCarts at: aCartID ifAbsent: []) value.
+	cart add: anItem of: aQuantity.! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 16:32:26'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:32:26'!
+ERROR!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/1/2020 16:32:26'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 12/1/2020 16:32:26'!
+ERROR!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:32:28'!
+ERROR!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:33:01'!
+ERROR!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 16:33:09'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:33:09'!
+ERROR!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/1/2020 16:33:09'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 12/1/2020 16:33:09'!
+ERROR!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:33:10'!
+ERROR!
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:34:12' prior: 50882040!
+addToCart: aCartID item: anItemID quantity: aQuantity
+
+	| cart |
+	
+	cart := (activeCarts at: aCartID ifAbsent: []) value.
+	cart add: aQuantity of: anItemID.! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 16:34:17'!
+PASSED!
+
+!testRun: #ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:34:17'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/1/2020 16:34:17'!
+PASSED!
+
+!testRun: #ApiRestTest #test04checksOutCorrectly stamp: 'AM 12/1/2020 16:34:17'!
+PASSED!
+!ApiRestTest methodsFor: 'cartTests' stamp: 'AM 12/1/2020 16:35:52'!
+test03itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).! !
+
+!methodRemoval: ApiRestTest #test02itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:35:52'!
+test02itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).!
+!ApiRestTest methodsFor: 'cartTests' stamp: 'AM 12/1/2020 16:38:36'!
+test02cantAddItemsToNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	self 
+		should:[api addToCart: 1 item: (testObjectsFactory itemSellByTheStore) quantity: 1]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+	! !
+!ApiRestTest methodsFor: 'cartTests' stamp: 'AM 12/1/2020 16:39:13' prior: 50882137!
+test02cantAddItemsToNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	self 
+		should:[api addToCart: 1 item: (testObjectsFactory itemSellByTheStore) quantity: 1]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+		
+	self assert: (api hasNoActiveCarts).
+	! !
+!CartManager class methodsFor: 'no messages' stamp: 'AM 12/1/2020 16:40:08'!
+cartDoesntExistErrorDescription
+
+	^'There is no cart with provided ID'! !
+!CartManager class methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 16:40:10' prior: 50882166!
+cartDoesntExistErrorDescription
+
+	^'There is no cart with provided ID'.! !
+!CartManager methodsFor: 'error signaling' stamp: 'AM 12/1/2020 16:41:23'!
+signalNonExistentCart! !
+!CartManager methodsFor: 'error signaling' stamp: 'AM 12/1/2020 16:41:35' prior: 50882177!
+signalNonExistentCart
+
+	self error: self class cartDoesntExistErrorDescription.! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 16:42:08' prior: 50882082!
+addToCart: aCartID item: anItemID quantity: aQuantity
+
+	| cart |
+	
+	cart := (activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.
+	cart add: aQuantity of: anItemID.! !
+
+!testRun: #ApiRestTest #test02cantAddItemsToNonExistingCart stamp: 'AM 12/1/2020 16:42:26'!
+PASSED!
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:43:00' prior: 50882020!
+cartWithID: aCartID
+
+	^(activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.! !
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 16:44:57'!
+test03cantListItemsOfNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	self 
+		should:[api listCart: 1]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+		
+	self assert: (api hasNoActiveCarts).
+	! !
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 16:45:04' prior: 50882205!
+test03cantListItemsOfNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	self 
+		should:[api listCart: 1]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+	
+	! !
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/1/2020 16:45:09'!
+FAILURE!
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/1/2020 16:45:09'!
+FAILURE!
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:46:06' prior: 50882199!
+cartWithID: aCartID
+	
+	^(activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:47:06' prior: 50882013!
+listCart: aCartID
+	
+	| cartToList |
+	
+	cartToList := (self cartWithID: aCartID) value.
+	
+	^cartToList items.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:47:31' prior: 50882008!
+ownerIDForCart: aCartID
+
+	^(self cartWithID: aCartID) key.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:10:00' prior: 50882251!
+ownerIDForCart: aCartID
+
+	activeCarts at: aCartID key.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:48:09' prior: 50882244!
+listCart: aCartID
+	
+	| cartToList |
+	
+	cartToList := self cartWithID: aCartID.
+	
+	^cartToList items.! !
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/1/2020 16:48:19'!
+PASSED!
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:48:45' prior: 50882256!
+ownerIDForCart: aCartID
+
+	^activeCarts at: aCartID key.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:49:16' prior: 50882271!
+ownerIDForCart: aCartID
+
+	^(activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) key.! !
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 16:50:23'!
+test04cantCheckOutNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	self 
+		should:[api checkOutCart: 1 charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+	
+	! !
+
+!testRun: #ApiRestTest #test04cantCheckOutNonExistingCart stamp: 'AM 12/1/2020 16:50:30'!
+PASSED!
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 16:50:41'!
+test05itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).! !
+
+!methodRemoval: ApiRestTest #test03itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:50:41'!
+test03itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 16:51:00'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantAddItemsToNonExistingCart stamp: 'AM 12/1/2020 16:51:00'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/1/2020 16:51:00'!
+PASSED!
+
+!testRun: #ApiRestTest #test04cantCheckOutNonExistingCart stamp: 'AM 12/1/2020 16:51:00'!
+PASSED!
+
+!testRun: #ApiRestTest #test05itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 16:51:00'!
+PASSED!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 16:57:54'!
+test01cantCheckOutCart30MinutesAfterCreation
+
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 16:58:19' prior: 50882349!
+test01cantCheckOutCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	! !
+
+!classDefinition: #ApiRestTest category: 'TusLibros' stamp: 'AM 12/1/2020 16:58:55'!
+TestCase subclass: #ApiRestTest
+	instanceVariableNames: 'testObjectsFactory debitBehavior clientValidationBehavior simulatedTime'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!ApiRestTest methodsFor: 'clock protocol' stamp: 'AM 12/1/2020 16:58:53'!
+now
+	
+	^simulatedTime.! !
+!ApiRestTest methodsFor: 'clock protocol' stamp: 'AM 12/1/2020 17:00:45'!
+leap30MinutesIntoTheFuture
+	
+	simulatedTime.! !
+
+DateAndTime now.!
+!ApiRestTest methodsFor: 'set up' stamp: 'AM 12/1/2020 17:01:13' prior: 50880057 overrides: 16927572!
+setUp 
+
+	testObjectsFactory := StoreTestObjectsFactory new.
+	debitBehavior := [ :anAmount :aCreditCard | ].
+	clientValidationBehavior := [:aClientID : aPassword | ].
+	simulatedTime := DateAndTime now.! !
+
+30 minutes!
+!ApiRestTest methodsFor: 'clock protocol' stamp: 'AM 12/1/2020 17:02:17' prior: 50882378!
+leap30MinutesIntoTheFuture
+	
+	simulatedTime := simulatedTime + 30 minutes.! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:02:48' prior: 50882354!
+test01cantCheckOutCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:02:51' prior: 50882400!
+test01cantCheckOutCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	
+	! !
+!ApiRest methodsFor: 'initialization' stamp: 'AM 12/1/2020 17:04:12'!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock  
+	
+	priceCatalogue := aPriceCatalogue.
+	merchantProcessor := aMerchantProcessor.
+	salesBook := Dictionary new.
+	cartManager := CartManager new.
+	clientPasswordValidator := aClientPasswordValidator.! !
+!ApiRest class methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:04:12' prior: 50880595!
+withCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator
+	
+	^self new initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock.! !
+
+!methodRemoval: ApiRest #initializeWithCatalogue:salesThrough:validatingClientsThrough: stamp: 'AM 12/1/2020 17:04:12'!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator 
+	
+	priceCatalogue := aPriceCatalogue.
+	merchantProcessor := aMerchantProcessor.
+	salesBook := Dictionary new.
+	cartManager := CartManager new.
+	clientPasswordValidator := aClientPasswordValidator.!
+!ApiRest class methodsFor: 'instance creation' stamp: 'AM 12/1/2020 17:05:54'!
+withCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock 
+	
+	^self new initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock.! !
+!ApiRestTest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:05:54' prior: 50882219!
+test03cantListItemsOfNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: aClock.
+	
+	self 
+		should:[api listCart: 1]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+	
+	! !
+!ApiRestTest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:05:54' prior: 50881345!
+test04checksOutCorrectly
+
+	| api cartID expected|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: aClock.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	expected := OrderedCollection with: (api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard).
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+!ApiRestTest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:05:54' prior: 50882151!
+test02cantAddItemsToNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: aClock.
+	
+	self 
+		should:[api addToCart: 1 item: (testObjectsFactory itemSellByTheStore) quantity: 1]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+		
+	self assert: (api hasNoActiveCarts).
+	! !
+!ApiRestTest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:05:54' prior: 50881405!
+test01newCartShouldBeEmpty
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: aClock.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	expected := OrderedCollection new.
+	
+	self assert: expected equals: (api listCart: cartID).! !
+!ApiRestTest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:05:54' prior: 50882299!
+test05itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: aClock.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).! !
+!ApiRestTest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:05:54' prior: 50882282!
+test04cantCheckOutNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: aClock.
+	
+	self 
+		should:[api checkOutCart: 1 charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+	
+	! !
+!ApiRestTest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:05:54' prior: 50880250!
+test03cantCreateCartForInvalidClientIDPasswordCombination
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: aClock.
+	
+	clientValidationBehavior := [:client :password | self error: ApiRest invalidIDOrPasswordErrorDescription].
+	
+	self
+		should:[api createCartFor: 'client' withPassword: 'password']
+		raise: Error
+		withMessageText: ApiRest invalidIDOrPasswordErrorDescription.
+		
+	self assert: api hasNoActiveCarts.! !
+!ApiRestTest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:05:55' prior: 50882412!
+test01cantCheckOutCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: aClock.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	
+	! !
+
+!methodRemoval: ApiRest class #withCatalogue:salesThrough:validatingClientsThrough: stamp: 'AM 12/1/2020 17:05:55'!
+withCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator
+	
+	^self new initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock.!
+
+!methodRemoval: ApiRest class #withCatalogue:salesThrough: stamp: 'AM 12/1/2020 17:06:12'!
+withCatalogue: aPriceCatalogue salesThrough: aMerchanProcessor
+	
+	^self new initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchanProcessor!
+!ApiRestTest methodsFor: 'checkOutTests' stamp: 'AM 12/1/2020 17:06:34' prior: 50882575!
+test03cantCreateCartForInvalidClientIDPasswordCombination
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	clientValidationBehavior := [:client :password | self error: ApiRest invalidIDOrPasswordErrorDescription].
+	
+	self
+		should:[api createCartFor: 'client' withPassword: 'password']
+		raise: Error
+		withMessageText: ApiRest invalidIDOrPasswordErrorDescription.
+		
+	self assert: api hasNoActiveCarts.! !
+!ApiRestTest methodsFor: 'checkOutTests' stamp: 'AM 12/1/2020 17:06:38' prior: 50882490!
+test04checksOutCorrectly
+
+	| api cartID expected|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	expected := OrderedCollection with: (api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard).
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 17:06:46' prior: 50882526!
+test01newCartShouldBeEmpty
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	expected := OrderedCollection new.
+	
+	self assert: expected equals: (api listCart: cartID).! !
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 17:06:51' prior: 50882510!
+test02cantAddItemsToNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	self 
+		should:[api addToCart: 1 item: (testObjectsFactory itemSellByTheStore) quantity: 1]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+		
+	self assert: (api hasNoActiveCarts).
+	! !
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 17:06:55' prior: 50882477!
+test03cantListItemsOfNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	self 
+		should:[api listCart: 1]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+	
+	! !
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 17:06:59' prior: 50882560!
+test04cantCheckOutNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	self 
+		should:[api checkOutCart: 1 charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+	
+	! !
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 17:07:03' prior: 50882541!
+test05itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).! !
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 17:07:06'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantAddItemsToNonExistingCart stamp: 'AM 12/1/2020 17:07:06'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/1/2020 17:07:06'!
+PASSED!
+
+!testRun: #ApiRestTest #test04cantCheckOutNonExistingCart stamp: 'AM 12/1/2020 17:07:06'!
+PASSED!
+
+!testRun: #ApiRestTest #test05itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 17:07:06'!
+PASSED!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:07:15' prior: 50882594!
+test01cantCheckOutCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:08:38' prior: 50882759!
+test01cantCheckOutCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+	
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:09:59' prior: 50882772!
+test01cantCheckOutCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+	
+	self assert: (api listPurchasesFor: 'client') isEmpty.
+	
+	! !
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:10:07'!
+ERROR!
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:10:07'!
+ERROR!
+!CartManager class methodsFor: 'error descriptions' stamp: 'AM 12/1/2020 17:10:21'!
+cartExpiredErrorDescription
+	self shouldBeImplemented.! !
+!CartManager class methodsFor: 'error descriptions' stamp: 'AM 12/1/2020 17:10:32' prior: 50882817!
+cartExpiredErrorDescription
+	
+	^'Cart is expired'! !
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:10:34'!
+FAILURE!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:11:15' prior: 50882790!
+test01cantCheckOutCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+	
+	self assert: (api listPurchasesFor: 'client') isEmpty.
+	
+	! !
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:11:21'!
+FAILURE!
+
+!classDefinition: #ApiRest category: 'TusLibros' stamp: 'AM 12/1/2020 17:13:35'!
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts nextCartID merchantProcessor clientPasswordValidator salesBook ownerForCart cartManager clock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!ApiRest methodsFor: 'initialization' stamp: 'AM 12/1/2020 17:13:33' prior: 50882424!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock  
+	
+	priceCatalogue := aPriceCatalogue.
+	merchantProcessor := aMerchantProcessor.
+	salesBook := Dictionary new.
+	cartManager := CartManager new.
+	clientPasswordValidator := aClientPasswordValidator.
+	clock := aClock.! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 17:14:55'!
+addCart: aCart forClient: aClientID atTime: aDateTime 
+
+	| cartID |
+	
+	cartID := nextCartID.
+	nextCartID := nextCartID + 1.
+	
+	activeCarts at: cartID put: aClientID->aCart.
+	^cartID.
+	! !
+!ApiRest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:14:55' prior: 50881813!
+createCartFor: aClientID withPassword: aPassword
+	
+	clientPasswordValidator authenticate: aClientID withPassword: aPassword.
+	^cartManager addCart: (Cart acceptingItemsOf: priceCatalogue) forClient: aClientID atTime: (clock now).
+	
+	
+	
+	! !
+
+!methodRemoval: CartManager #addCart:forClient: stamp: 'AM 12/1/2020 17:14:55'!
+addCart: aCart forClient: aClientID
+
+	| cartID |
+	
+	cartID := nextCartID.
+	nextCartID := nextCartID + 1.
+	
+	activeCarts at: cartID put: aClientID->aCart.
+	^cartID.
+	!
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 17:15:53' prior: 50882880!
+addCart: aCart forClient: aClientID atTime: aDateTime 
+
+	| cartID |
+	
+	cartID := nextCartID.
+	nextCartID := nextCartID + 1.
+	
+	cartLastActionTimestamp at: cartID put: aDateTime.
+	activeCarts at: cartID put: aClientID->aCart.
+	^cartID.
+	! !
+!ApiRest methodsFor: 'check out' stamp: 'AM 12/1/2020 17:16:51' prior: 50881903!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook cartToCheckOut |
+	
+	cartToCheckOut := cartManager cartWithID: aCartID.
+	cartOwner := cartManager ownerIDForCart: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new].
+	
+	cashier := Cashier toCheckout: cartToCheckOut charging: aCreditCard throught: merchantProcessor on: (clock now) registeringOn: clientSalesBook.
+	^cashier checkOut.
+	 ! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 17:18:34' prior: 50882238!
+cartWithID: aCartID
+	
+	self assertIsNotExpired: aCartID.
+	^(activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.! !
+!CartManager methodsFor: 'assertions' stamp: 'AM 12/1/2020 17:20:15'!
+assertIsNotExpired: aCartID
+
+	(cartLastActionTimestamp at: aCartID)! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 17:21:39' prior: 50882936!
+cartWithID: aCartID
+	
+	| cart |
+	
+	 cart := (activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.
+	 self assertIsNotExpired: aCartID.
+	^cart.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 17:21:44' prior: 50882948!
+cartWithID: aCartID
+	
+	| cart |
+	
+	cart := (activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.
+	self assertIsNotExpired: aCartID.
+	^cart.! !
+!CartManager methodsFor: 'assertions' stamp: 'AM 12/1/2020 17:23:31' prior: 50882943!
+assertIsNotExpired: aCartID
+
+	(cartLastActionTimestamp at: aCartID - 30 minutes)! !
+!CartManager class methodsFor: 'instance creation' stamp: 'AM 12/1/2020 17:24:16'!
+for: anApi
+
+	^self new initializeFor: anApi.! !
+
+!classDefinition: #CartManager category: 'TusLibros' stamp: 'AM 12/1/2020 17:25:03'!
+Object subclass: #CartManager
+	instanceVariableNames: 'activeCarts cartLastActionTimestamp salesBook nextCartID api'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!CartManager methodsFor: 'initialization' stamp: 'AM 12/1/2020 17:25:01'!
+initializeFor: anApi
+	
+	api := anApi.
+	activeCarts := Dictionary new.
+	cartLastActionTimestamp := Dictionary new.
+	salesBook := Dictionary new.
+	nextCartID := 0.! !
+
+!methodRemoval: CartManager #initialize stamp: 'AM 12/1/2020 17:25:17'!
+initialize
+	
+	activeCarts := Dictionary new.
+	cartLastActionTimestamp := Dictionary new.
+	salesBook := Dictionary new.
+	nextCartID := 0.!
+!CartManager methodsFor: 'assertions' stamp: 'AM 12/1/2020 17:30:35' prior: 50882964!
+assertIsNotExpired: aCartID
+
+	((cartLastActionTimestamp at: aCartID) > (api timeNow - 30)) ifFalse: [ activeCarts removeKey: aCartID.
+														     cartLastActionTimestamp removeKey: aCartID.
+															self signalCartExpired.]! !
+!CartManager methodsFor: 'assertions' stamp: 'AM 12/1/2020 17:31:24'!
+removeIfExpiredAndRaiseExeption: aCartID
+
+	((cartLastActionTimestamp at: aCartID) > (api timeNow - 30)) ifFalse: [ activeCarts removeKey: aCartID.
+														     cartLastActionTimestamp removeKey: aCartID.
+															self signalCartExpired.]! !
+!CartManager methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:31:24' prior: 50882956!
+cartWithID: aCartID
+	
+	| cart |
+	
+	cart := (activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.
+	self removeIfExpiredAndRaiseExeption: aCartID.
+	^cart.! !
+
+!methodRemoval: CartManager #assertIsNotExpired: stamp: 'AM 12/1/2020 17:31:24'!
+assertIsNotExpired: aCartID
+
+	((cartLastActionTimestamp at: aCartID) > (api timeNow - 30)) ifFalse: [ activeCarts removeKey: aCartID.
+														     cartLastActionTimestamp removeKey: aCartID.
+															self signalCartExpired.]!
+!CartManager methodsFor: 'error signaling' stamp: 'AM 12/1/2020 17:32:15'!
+signalCartExpired
+
+	self error: self class expiredCartErrorDescription.! !
+!CartManager methodsFor: 'error signaling' stamp: 'AM 12/1/2020 17:32:43' prior: 50883037!
+signalCartExpired
+
+	self error: self class cartExpiredErrorDescription.! !
+!ApiRest methodsFor: 'time keeping protocol' stamp: 'AM 12/1/2020 17:33:14'!
+timeNow
+	
+	^clock now.! !
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:33:32'!
+ERROR!
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:33:32'!
+ERROR!
+!ApiRest methodsFor: 'initialization' stamp: 'AM 12/1/2020 17:34:01' prior: 50882866!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock  
+	
+	priceCatalogue := aPriceCatalogue.
+	merchantProcessor := aMerchantProcessor.
+	salesBook := Dictionary new.
+	cartManager := CartManager new.
+	clientPasswordValidator := aClientPasswordValidator.
+	nextCartID := 0.
+	clock := aClock.! !
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:34:17'!
+ERROR!
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:34:17'!
+ERROR!
+!ApiRest methodsFor: 'initialization' stamp: 'AM 12/1/2020 17:34:59' prior: 50883059!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock  
+	
+	priceCatalogue := aPriceCatalogue.
+	merchantProcessor := aMerchantProcessor.
+	salesBook := Dictionary new.
+	cartManager := CartManager new.
+	clientPasswordValidator := aClientPasswordValidator.
+	clock := aClock.! !
+
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts merchantProcessor clientPasswordValidator salesBook ownerForCart cartManager clock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts merchantProcessor clientPasswordValidator salesBook ownerForCart cartManager clock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts nextCartID merchantProcessor clientPasswordValidator salesBook ownerForCart cartManager clock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classDefinition: #ApiRest category: 'TusLibros' stamp: 'AM 12/1/2020 17:35:21'!
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts nextCartID merchantProcessor clientPasswordValidator salesBook ownerForCart cartManager clock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts merchantProcessor clientPasswordValidator salesBook ownerForCart cartManager clock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts merchantProcessor clientPasswordValidator salesBook ownerForCart cartManager clock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classDefinition: #ApiRest category: 'TusLibros' stamp: 'AM 12/1/2020 17:36:27'!
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts merchantProcessor clientPasswordValidator salesBook ownerForCart cartManager clock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:36:42'!
+ERROR!
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:36:42'!
+ERROR!
+!ApiRest methodsFor: 'initialization' stamp: 'AM 12/1/2020 17:37:10' prior: 50883081!
+initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock  
+	
+	priceCatalogue := aPriceCatalogue.
+	merchantProcessor := aMerchantProcessor.
+	salesBook := Dictionary new.
+	cartManager := CartManager for: self.
+	clientPasswordValidator := aClientPasswordValidator.
+	clock := aClock.! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 17:38:11' prior: 50882907!
+addCart: aCart forClient: aClientID atTime: aDateTime 
+
+	| cartID |
+	
+	cartID := nextCartID.
+	nextCartID := nextCartID + 1.
+	
+	cartLastActionTimestamp at: cartID put: api timeNow.
+	activeCarts at: cartID put: aClientID->aCart.
+	^cartID.
+	! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 17:38:21'!
+addCart: aCart forClient: aClientID  
+
+	| cartID |
+	
+	cartID := nextCartID.
+	nextCartID := nextCartID + 1.
+	
+	cartLastActionTimestamp at: cartID put: api timeNow.
+	activeCarts at: cartID put: aClientID->aCart.
+	^cartID.
+	! !
+!ApiRest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:38:21' prior: 50882889!
+createCartFor: aClientID withPassword: aPassword
+	
+	clientPasswordValidator authenticate: aClientID withPassword: aPassword.
+	^cartManager addCart: (Cart acceptingItemsOf: priceCatalogue) forClient: aClientID .
+	
+	
+	
+	! !
+
+!methodRemoval: CartManager #addCart:forClient:atTime: stamp: 'AM 12/1/2020 17:38:21'!
+addCart: aCart forClient: aClientID atTime: aDateTime 
+
+	| cartID |
+	
+	cartID := nextCartID.
+	nextCartID := nextCartID + 1.
+	
+	cartLastActionTimestamp at: cartID put: api timeNow.
+	activeCarts at: cartID put: aClientID->aCart.
+	^cartID.
+	!
+
+self time now!
+
+self timeNow!
+
+cartLastActionTimestamp at: aCartID!
+
+(api timeNow - 30)!
+
+api timeNow!
+!CartManager methodsFor: 'time keeping protocol' stamp: 'AM 12/1/2020 17:41:33' prior: 50883008!
+removeIfExpiredAndRaiseExeption: aCartID
+
+	((cartLastActionTimestamp at: aCartID) > ((api timeNow) - 30)) ifFalse: [ activeCarts removeKey: aCartID.
+														     cartLastActionTimestamp removeKey: aCartID.
+															self signalCartExpired.]! !
+!CartManager methodsFor: 'time keeping protocol' stamp: 'AM 12/1/2020 17:42:18' prior: 50883218!
+removeIfExpiredAndRaiseExeption: aCartID
+
+	((cartLastActionTimestamp at: aCartID) > ((api timeNow) - 30 minutes)) ifFalse: [ activeCarts removeKey: aCartID.
+														     cartLastActionTimestamp removeKey: aCartID.
+															self signalCartExpired.]! !
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:42:42'!
+ERROR!
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:42:42'!
+ERROR!
+!ApiRest methodsFor: 'as yet unclassified' stamp: 'AM 12/1/2020 17:43:44' prior: 50880872!
+listPurchasesFor: aClientID
+
+	^salesBook at: aClientID ifAbsent: [salesBook at: aClientID put: OrderedCollection new.].! !
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:43:53'!
+PASSED!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:45:15'!
+test02cantListCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+	
+	self assert: (api listPurchasesFor: 'client') isEmpty.
+	
+	! !
+!ApiRestTest methodsFor: 'clock protocol' stamp: 'AM 12/1/2020 17:46:02'!
+leap15MinutesIntoTheFuture
+	
+	simulatedTime := simulatedTime + 15 minutes.! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:46:26' prior: 50883257!
+test02cantListCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api listCart: cartID]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+	
+	self assert: (api listPurchasesFor: 'client') isEmpty.
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:48:38' prior: 50883285!
+test02cantListCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api listCart: cartID]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+	
+
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:48:40' prior: 50883306!
+test02cantListCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api listCart: cartID]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:48:58' prior: 50883325!
+test02cantListCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api listCart: cartID]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+
+	
+	! !
+
+!testRun: #ApiRestTest #test02cantListCart30MinutesAfterCreation stamp: 'AM 12/1/2020 17:49:02'!
+PASSED!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:55:21'!
+test03addingItemsToCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection with: (testObjectsFactory itemSellByTheStore).	
+	self assert: (api listCart: cartID) equals: expected.
+	
+	! !
+
+!testRun: #ApiRestTest #test03addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/1/2020 17:55:24'!
+ERROR!
+
+!testRun: #ApiRestTest #test03addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/1/2020 17:55:24'!
+ERROR!
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 17:56:10' prior: 50882187!
+addToCart: aCartID item: anItemID quantity: aQuantity
+
+	| cart |
+	
+	cart := (activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.
+	cartLastActionTimestamp at: aCartID put: api timeNow.
+	cart add: aQuantity of: anItemID.! !
+
+!testRun: #ApiRestTest #test03addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/1/2020 17:56:28'!
+PASSED!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:57:04' prior: 50883363!
+test03addingItemsToCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection with: (testObjectsFactory itemSellByTheStore).	
+	self assert: (api listCart: cartID) equals: expected.
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:57:38'!
+test04listingCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection with: (testObjectsFactory itemSellByTheStore).	
+	self assert: (api listCart: cartID) equals: expected.
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:58:14' prior: 50883426!
+test04listingCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api listCart: cartID.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection with: (testObjectsFactory itemSellByTheStore).	
+	self assert: (api listCart: cartID) equals: expected.
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:59:14'!
+test04listeCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api listCart: cartID.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection with: (testObjectsFactory itemSellByTheStore).	
+	self assert: (api listCart: cartID) equals: expected.
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:59:20' prior: 50883466!
+test04listeCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api listCart: cartID.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection new.
+	self assert: (api listCart: cartID) equals: expected.
+	
+	! !
+
+!methodRemoval: ApiRestTest #test04listeCartResetsExpirationDeadline stamp: 'AM 12/1/2020 17:59:38'!
+test04listeCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api listCart: cartID.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection new.
+	self assert: (api listCart: cartID) equals: expected.
+	
+	!
+
+!testRun: #ApiRestTest #test04listingCartResetsExpirationDeadline stamp: 'AM 12/1/2020 17:59:46'!
+ERROR!
+
+!testRun: #ApiRestTest #test04listingCartResetsExpirationDeadline stamp: 'AM 12/1/2020 17:59:46'!
+ERROR!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 17:59:55' prior: 50883447!
+test04listingCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api listCart: cartID.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection new.	
+	self assert: (api listCart: cartID) equals: expected.
+	
+	! !
+
+!testRun: #ApiRestTest #test04listingCartResetsExpirationDeadline stamp: 'AM 12/1/2020 17:59:59'!
+ERROR!
+
+!testRun: #ApiRestTest #test04listingCartResetsExpirationDeadline stamp: 'AM 12/1/2020 17:59:59'!
+ERROR!
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 18:00:40' prior: 50882261!
+listCart: aCartID
+	
+	| cartToList |
+	
+	cartToList := self cartWithID: aCartID.
+	cartLastActionTimestamp at: aCartID put: api timeNow.
+	
+	^cartToList items.! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 18:00:58'!
+updateTimeFor: aCartID
+
+	^ cartLastActionTimestamp at: aCartID put: api timeNow! !
+!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 18:00:58' prior: 50883551!
+listCart: aCartID
+	
+	| cartToList |
+	
+	cartToList := self cartWithID: aCartID.
+	self updateTimeFor: aCartID.
+	
+	^cartToList items.! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 18:01:25' prior: 50883184!
+addCart: aCart forClient: aClientID  
+
+	| cartID |
+	
+	cartID := nextCartID.
+	nextCartID := nextCartID + 1.
+	
+	self updateTimeFor: cartID.
+	activeCarts at: cartID put: aClientID->aCart.
+	^cartID.
+	! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 18:01:46' prior: 50883391!
+addToCart: aCartID item: anItemID quantity: aQuantity
+
+	| cart |
+	
+	cart := (activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.
+	self updateTimeFor: aCartID.
+	cart add: aQuantity of: anItemID.! !
+!CartManager methodsFor: 'time keeping protocol' stamp: 'AM 12/1/2020 18:01:55' prior: 50883559!
+updateTimeFor: aCartID
+
+	^ cartLastActionTimestamp at: aCartID put: api timeNow.! !
+
+!testRun: #ApiRestTest #test04listingCartResetsExpirationDeadline stamp: 'AM 12/1/2020 18:02:17'!
+PASSED!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 18:03:08'!
+test04addingItemsToCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection with: (testObjectsFactory itemSellByTheStore).	
+	self assert: (api listCart: cartID) equals: expected.
+	
+	! !
+
+!methodRemoval: ApiRestTest #test03addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/1/2020 18:03:08'!
+test03addingItemsToCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection with: (testObjectsFactory itemSellByTheStore).	
+	self assert: (api listCart: cartID) equals: expected.
+	
+	!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 18:03:15'!
+test05listingCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api listCart: cartID.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection new.	
+	self assert: (api listCart: cartID) equals: expected.
+	
+	! !
+
+!methodRemoval: ApiRestTest #test04listingCartResetsExpirationDeadline stamp: 'AM 12/1/2020 18:03:15'!
+test04listingCartResetsExpirationDeadline
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	self leap15MinutesIntoTheFuture.
+	
+	api listCart: cartID.
+	self leap15MinutesIntoTheFuture.
+	
+	expected := OrderedCollection new.	
+	self assert: (api listCart: cartID) equals: expected.
+	
+	!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 18:03:39'!
+test03cantAddItemsToCart30MinutesAfterLastAction
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api listCart: cartID]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+
+	
+	! !
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 18:03:50'!
+test02cantListCart30MinutesAfterLastAction
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api listCart: cartID]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+
+	
+	! !
+
+!methodRemoval: ApiRestTest #test02cantListCart30MinutesAfterCreation stamp: 'AM 12/1/2020 18:03:50'!
+test02cantListCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api listCart: cartID]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+
+	
+	!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 18:03:59'!
+test01cantCheckOutCart30MinutesAfterLastAction
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+	
+	self assert: (api listPurchasesFor: 'client') isEmpty.
+	
+	! !
+
+!methodRemoval: ApiRestTest #test01cantCheckOutCart30MinutesAfterCreation stamp: 'AM 12/1/2020 18:03:59'!
+test01cantCheckOutCart30MinutesAfterCreation
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+	
+	self assert: (api listPurchasesFor: 'client') isEmpty.
+	
+	!
+!ApiRestTest methodsFor: 'timeKeepingTests' stamp: 'AM 12/1/2020 18:05:30' prior: 50883677!
+test03cantAddItemsToCart30MinutesAfterLastAction
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	self leap30MinutesIntoTheFuture.
+	
+	self
+		should: [api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1]
+		raise: Error
+		withMessageText: CartManager cartExpiredErrorDescription.
+
+	
+	! !
+
+!testRun: #ApiRestTest #test03cantAddItemsToCart30MinutesAfterLastAction stamp: 'AM 12/1/2020 18:05:33'!
+FAILURE!
+
+!testRun: #ApiRestTest #test03cantAddItemsToCart30MinutesAfterLastAction stamp: 'AM 12/1/2020 18:05:33'!
+FAILURE!
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 18:06:50' prior: 50883581!
+addToCart: aCartID item: anItemID quantity: aQuantity
+
+	| cart |
+	
+	cart := (activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.
+	self removeIfExpiredAndRaiseExeption: aCartID.
+	self updateTimeFor: aCartID.
+	cart add: aQuantity of: anItemID.! !
+
+!testRun: #ApiRestTest #test03cantAddItemsToCart30MinutesAfterLastAction stamp: 'AM 12/1/2020 18:07:05'!
+PASSED!
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterLastAction stamp: 'AM 12/1/2020 18:07:08'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantListCart30MinutesAfterLastAction stamp: 'AM 12/1/2020 18:07:08'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantAddItemsToCart30MinutesAfterLastAction stamp: 'AM 12/1/2020 18:07:08'!
+PASSED!
+
+!testRun: #ApiRestTest #test04addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/1/2020 18:07:08'!
+PASSED!
+
+!testRun: #ApiRestTest #test05listingCartResetsExpirationDeadline stamp: 'AM 12/1/2020 18:07:08'!
+PASSED!
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 18:08:17'!
+test04cantCreateCartForInvalidClientIDPasswordCombination
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	clientValidationBehavior := [:client :password | self error: ApiRest invalidIDOrPasswordErrorDescription].
+	
+	self
+		should:[api createCartFor: 'client' withPassword: 'password']
+		raise: Error
+		withMessageText: ApiRest invalidIDOrPasswordErrorDescription.
+		
+	self assert: api hasNoActiveCarts.! !
+
+!methodRemoval: ApiRestTest #test03cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/1/2020 18:08:17'!
+test03cantCreateCartForInvalidClientIDPasswordCombination
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	clientValidationBehavior := [:client :password | self error: ApiRest invalidIDOrPasswordErrorDescription].
+	
+	self
+		should:[api createCartFor: 'client' withPassword: 'password']
+		raise: Error
+		withMessageText: ApiRest invalidIDOrPasswordErrorDescription.
+		
+	self assert: api hasNoActiveCarts.!
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 18:08:29'!
+test05cantCreateCartForInvalidClientIDPasswordCombination
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	clientValidationBehavior := [:client :password | self error: ApiRest invalidIDOrPasswordErrorDescription].
+	
+	self
+		should:[api createCartFor: 'client' withPassword: 'password']
+		raise: Error
+		withMessageText: ApiRest invalidIDOrPasswordErrorDescription.
+		
+	self assert: api hasNoActiveCarts.! !
+
+!methodRemoval: ApiRestTest #test04cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/1/2020 18:08:29'!
+test04cantCreateCartForInvalidClientIDPasswordCombination
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	clientValidationBehavior := [:client :password | self error: ApiRest invalidIDOrPasswordErrorDescription].
+	
+	self
+		should:[api createCartFor: 'client' withPassword: 'password']
+		raise: Error
+		withMessageText: ApiRest invalidIDOrPasswordErrorDescription.
+		
+	self assert: api hasNoActiveCarts.!
+!ApiRestTest methodsFor: 'cartManagementTests' stamp: 'AM 12/1/2020 18:08:34'!
+test06itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).! !
+
+!methodRemoval: ApiRestTest #test05itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 18:08:34'!
+test05itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).!
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/1/2020 18:09:33'!
+test04cantCreateCartForInvalidClientIDPasswordCombination
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	clientValidationBehavior := [:client :password | self error: ApiRest invalidIDOrPasswordErrorDescription].
+	
+	self
+		should:[api createCartFor: 'client' withPassword: 'password']
+		raise: Error
+		withMessageText: ApiRest invalidIDOrPasswordErrorDescription.
+		
+	self assert: api hasNoActiveCarts.! !
+
+!methodRemoval: ApiRestTest #test05cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/1/2020 18:09:33'!
+test05cantCreateCartForInvalidClientIDPasswordCombination
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	clientValidationBehavior := [:client :password | self error: ApiRest invalidIDOrPasswordErrorDescription].
+	
+	self
+		should:[api createCartFor: 'client' withPassword: 'password']
+		raise: Error
+		withMessageText: ApiRest invalidIDOrPasswordErrorDescription.
+		
+	self assert: api hasNoActiveCarts.!
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/1/2020 18:09:39'!
+test05itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).! !
+
+!methodRemoval: ApiRestTest #test06itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 18:09:39'!
+test06itemIsAddedToCartCorrectly
+
+	| api cartID expected |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	
+	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	
+	self assert: expected equals: (api listCart: cartID).!
+!ApiRestTest methodsFor: 'checkOutTests' stamp: 'AM 12/1/2020 18:10:50'!
+test04checkOutReturnsSaleInformation
+
+	| api cartID expected|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	expected := OrderedCollection with: (api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard).
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+!methodRemoval: ApiRestTest #test04checksOutCorrectly stamp: 'AM 12/1/2020 18:10:50'!
+test04checksOutCorrectly
+
+	| api cartID expected|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	expected := OrderedCollection with: (api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard).
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). !
+!ApiRestTest methodsFor: 'checkOutTests' stamp: 'AM 12/1/2020 18:11:09' prior: 50884018!
+test04checkOutReturnsSaleInformation
+
+	| api cartID expected|
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	expected := OrderedCollection with: (api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard).
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+!ApiRestTest methodsFor: 'checkOutTests' stamp: 'AM 12/1/2020 18:11:36' prior: 50884057!
+test04checkOutReturnsSaleInformation
+
+	| api cartID expected sale |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	sale := api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	expected := OrderedCollection with: sale.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+!ApiRestTest methodsFor: 'checkOutTests' stamp: 'AM 12/1/2020 18:11:57'!
+test01cantCheckOutNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	self 
+		should:[api checkOutCart: 1 charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+	
+	! !
+
+!methodRemoval: ApiRestTest #test04cantCheckOutNonExistingCart stamp: 'AM 12/1/2020 18:11:57'!
+test04cantCheckOutNonExistingCart
+
+	| api |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	self 
+		should:[api checkOutCart: 1 charging: testObjectsFactory notExpiredCreditCard]
+		raise: Error 
+		withMessageText: CartManager cartDoesntExistErrorDescription.
+	
+	!
+!ApiRestTest methodsFor: 'checkOutTests' stamp: 'AM 12/1/2020 18:12:02'!
+test02checkOutReturnsSaleInformation
+
+	| api cartID expected sale |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	sale := api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	expected := OrderedCollection with: sale.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+
+!methodRemoval: ApiRestTest #test04checkOutReturnsSaleInformation stamp: 'AM 12/1/2020 18:12:02'!
+test04checkOutReturnsSaleInformation
+
+	| api cartID expected sale |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	sale := api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	expected := OrderedCollection with: sale.
+	
+	self assert: expected equals: (api listPurchasesFor: 'client'). !
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/1/2020 18:14:50'!
+test06cartIsDeletedAfterCheckOut
+
+	| api cartID |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
+	
+	self
+		should: [api listCart: cartID]
+		raise: Error
+		withMessageText: CartManager cartDoesntExistErrorDescription.! !
+
+!testRun: #ApiRestTest #test06cartIsDeletedAfterCheckOut stamp: 'AM 12/1/2020 18:14:55'!
+FAILURE!
+
+!testRun: #ApiRestTest #test06cartIsDeletedAfterCheckOut stamp: 'AM 12/1/2020 18:14:55'!
+FAILURE!
+!ApiRest methodsFor: 'check out' stamp: 'AM 12/1/2020 18:16:05' prior: 50882918!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook cartToCheckOut sale |
+	
+	cartToCheckOut := cartManager cartWithID: aCartID.
+	cartOwner := cartManager ownerIDForCart: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new].
+	
+	cashier := Cashier toCheckout: cartToCheckOut charging: aCreditCard throught: merchantProcessor on: (clock now) registeringOn: clientSalesBook.
+	sale := cashier checkOut.
+	 ! !
+!ApiRest methodsFor: 'check out' stamp: 'AM 12/1/2020 18:17:04' prior: 50884192!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner clientSalesBook cartToCheckOut sale |
+	
+	cartToCheckOut := cartManager cartWithID: aCartID.
+	cartOwner := cartManager ownerIDForCart: aCartID.
+	clientSalesBook := salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new].
+	
+	cashier := Cashier toCheckout: cartToCheckOut charging: aCreditCard throught: merchantProcessor on: (clock now) registeringOn: clientSalesBook.
+	sale := cashier checkOut.
+	
+	cartManager removeCart: aCartID.
+	
+	^sale.
+	 ! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 18:17:29'!
+removeCart: aCartID
+
+	! !
+!CartManager methodsFor: 'adding' stamp: 'AM 12/1/2020 18:18:32' prior: 50884231!
+removeCart: aCartID
+
+	activeCarts removeKey: aCartID.
+	cartLastActionTimestamp removeKey: aCartID.! !
+
+Object subclass: #CartManager
+	instanceVariableNames: 'activeCarts cartLastActionTimestamp nextCartID api'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classDefinition: #CartManager category: 'TusLibros' stamp: 'AM 12/1/2020 18:19:07'!
+Object subclass: #CartManager
+	instanceVariableNames: 'activeCarts cartLastActionTimestamp nextCartID api'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterLastAction stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test01cantCheckOutNonExistingCart stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantAddItemsToNonExistingCart stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantListCart30MinutesAfterLastAction stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test02checkOutReturnsSaleInformation stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantAddItemsToCart30MinutesAfterLastAction stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test04addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test04cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test05itemIsAddedToCartCorrectly stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test05listingCartResetsExpirationDeadline stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test06cartIsDeletedAfterCheckOut stamp: 'AM 12/1/2020 18:19:13'!
+PASSED!
+!CartManager methodsFor: 'initialization' stamp: 'AM 12/1/2020 18:19:23' prior: 50882983!
+initializeFor: anApi
+	
+	api := anApi.
+	activeCarts := Dictionary new.
+	cartLastActionTimestamp := Dictionary new.
+	nextCartID := 0.! !
+
+!testRun: #ApiRestTest #test02checkOutReturnsSaleInformation stamp: 'AM 12/1/2020 18:20:00'!
+PASSED!
+
+!testRun: #ApiRestTest #test06cartIsDeletedAfterCheckOut stamp: 'AM 12/1/2020 18:20:12'!
+PASSED!
+
+----QUIT----(1 December 2020 18:21:02) CuisUniversity-4383.image priorSource: 17602740!
+
+----STARTUP---- (1 December 2020 19:42:14) as C:\Users\Chara\Desktop\Facultad\Ingenieria 1\CUIS\CuisUniversity-4383.image!
+
+
+----QUIT----(1 December 2020 19:47:57) CuisUniversity-4383.image priorSource: 17685134!
