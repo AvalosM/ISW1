@@ -37271,3 +37271,922 @@ PASSED!
 
 !testRun: #CashierTest #test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit stamp: 'AM 12/3/2020 00:19:06'!
 PASSED!
+
+----SNAPSHOT----(3 December 2020 00:22:21) CuisUniversity-4383.image priorSource: 17685348!
+
+!classRemoval: #StoreTestObjectsFactory stamp: 'AM 12/3/2020 00:22:24'!
+Object subclass: #StoreTestObjectsFactory
+	instanceVariableNames: 'today'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classRemoval: #Sale stamp: 'AM 12/3/2020 00:22:24'!
+Object subclass: #Sale
+	instanceVariableNames: 'total soldItems transactionID'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classRemoval: #CreditCard stamp: 'AM 12/3/2020 00:22:25'!
+Object subclass: #CreditCard
+	instanceVariableNames: 'number expirationDate owner'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classRemoval: #Cashier stamp: 'AM 12/3/2020 00:22:25'!
+Object subclass: #Cashier
+	instanceVariableNames: 'cart salesBook merchantProcessor creditCard total transactionID'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classRemoval: #CartManager stamp: 'AM 12/3/2020 00:22:25'!
+Object subclass: #CartManager
+	instanceVariableNames: 'activeCarts cartLastActionTimestamp nextCartID api'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classRemoval: #Cart stamp: 'AM 12/3/2020 00:22:26'!
+Object subclass: #Cart
+	instanceVariableNames: 'catalogue items'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classRemoval: #ApiRest stamp: 'AM 12/3/2020 00:22:26'!
+Object subclass: #ApiRest
+	instanceVariableNames: 'priceCatalogue activeCarts merchantProcessor clientPasswordValidator salesBook ownerForCart cartManager clock'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classRemoval: #CashierTest stamp: 'AM 12/3/2020 00:22:26'!
+TestCase subclass: #CashierTest
+	instanceVariableNames: 'testObjectsFactory debitBehavior nextTransactionID'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classRemoval: #CartTest stamp: 'AM 12/3/2020 00:22:27'!
+TestCase subclass: #CartTest
+	instanceVariableNames: 'testObjectsFactory'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classRemoval: #ApiRestTest stamp: 'AM 12/3/2020 00:22:27'!
+TestCase subclass: #ApiRestTest
+	instanceVariableNames: 'testObjectsFactory debitBehavior clientValidationBehavior simulatedTime nextTransactionID'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+----End fileIn of C:\Users\Chara\Desktop\TusLibros-Ejercicio3.st----!
+
+!testRun: #CashierTest #test01CanNotCheckoutAnEmptyCart stamp: 'AM 12/3/2020 00:23:32'!
+PASSED!
+
+!testRun: #CashierTest #test02CalculatedTotalIsCorrect stamp: 'AM 12/3/2020 00:23:32'!
+PASSED!
+
+!testRun: #CashierTest #test03CanNotCheckoutWithAnExpiredCreditCart stamp: 'AM 12/3/2020 00:23:32'!
+PASSED!
+
+!testRun: #CashierTest #test04CheckoutRegistersASale stamp: 'AM 12/3/2020 00:23:32'!
+PASSED!
+
+!testRun: #CashierTest #test05CashierChargesCreditCardUsingMerchantProcessor stamp: 'AM 12/3/2020 00:23:32'!
+PASSED!
+
+!testRun: #CashierTest #test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit stamp: 'AM 12/3/2020 00:23:32'!
+PASSED!
+
+----QUIT----(3 December 2020 00:25:25) CuisUniversity-4383.image priorSource: 17761508!
+
+----STARTUP---- (3 December 2020 12:14:04) as C:\Users\Chara\Desktop\Facultad\Ingenieria 1\CUIS\CuisUniversity-4383.image!
+
+!Sale class methodsFor: 'instance creation' stamp: 'AM 12/3/2020 12:17:51' prior: 50887867!
+forCart: aCart withTransactionID: aTransactionID
+	
+	^self new initializeSaleOf: aCart.
+	! !
+!Sale class methodsFor: 'instance creation' stamp: 'AM 12/3/2020 12:18:13' prior: 50887964!
+forCart: aCart withTransactionID: aTransactionID
+	
+	^self new initializeSaleOf: aCart withTransactionID: ''.
+	! !
+!Sale class methodsFor: 'instance creation' stamp: 'AM 12/3/2020 12:18:20'!
+forCart: aCart 
+	
+	^self new initializeSaleOf: aCart withTransactionID: ''.
+	! !
+!Cashier methodsFor: 'as yet unclassified' stamp: 'AM 12/3/2020 12:18:20' prior: 50887675!
+createSale
+	
+	^Sale forCart: cart .
+! !
+
+!methodRemoval: Sale class #forCart:withTransactionID: stamp: 'AM 12/3/2020 12:18:20'!
+forCart: aCart withTransactionID: aTransactionID
+	
+	^self new initializeSaleOf: aCart withTransactionID: ''.
+	!
+
+!classDefinition: 'Sale class' category: 'TusLibros' stamp: 'AM 12/3/2020 12:19:13'!
+Sale class
+	instanceVariableNames: 'nextSaleID'!
+!Sale class methodsFor: 'instance creation' stamp: 'AM 12/3/2020 12:19:11' prior: 50887976!
+forCart: aCart 
+	
+	| saleID |
+	
+	saleID := nextSaleID.
+	
+	^self new initializeSaleOf: aCart withTransactionID: ''.
+	! !
+!Sale class methodsFor: 'instance creation' stamp: 'AM 12/3/2020 12:19:43' prior: 50887997!
+forCart: aCart 
+	
+	^self new initializeSaleOf: aCart withTransactionID: self saleID.
+	! !
+!Sale class methodsFor: 'sale ID' stamp: 'AM 12/3/2020 12:20:43'!
+saleID
+
+	| saleID |
+	
+	saleID := 	nextSaleID.
+	nextSaleID := nextSaleID + 1.! !
+!Sale class methodsFor: 'sale ID' stamp: 'AM 12/3/2020 12:20:49' prior: 50888009!
+saleID
+
+	| saleID |
+	
+	saleID := 	nextSaleID.
+	nextSaleID := nextSaleID + 1.
+	
+	^saleID.! !
+!Sale class methodsFor: 'sale ID' stamp: 'AM 12/3/2020 12:20:57'!
+newSaleID
+
+	| saleID |
+	
+	saleID := 	nextSaleID.
+	nextSaleID := nextSaleID + 1.
+	
+	^saleID.! !
+
+!methodRemoval: Sale class #saleID stamp: 'AM 12/3/2020 12:21:06'!
+saleID
+
+	| saleID |
+	
+	saleID := 	nextSaleID.
+	nextSaleID := nextSaleID + 1.
+	
+	^saleID.!
+!Sale class methodsFor: 'instance creation' stamp: 'AM 12/3/2020 12:21:16' prior: 50888004!
+forCart: aCart 
+	
+	^self new initializeSaleOf: aCart withTransactionID: self newSaleID.
+	! !
+!Sale methodsFor: 'initialization' stamp: 'AM 12/3/2020 12:22:05'!
+initializeSaleOf: aCart withSaleID: aTransactionID
+
+	total := aCart total.
+	soldItems := aCart items.
+	transactionID := aTransactionID.! !
+!Sale class methodsFor: 'as yet unclassified' stamp: 'AM 12/3/2020 12:22:05' prior: 50888031!
+forCart: aCart 
+	
+	^self new initializeSaleOf: aCart withSaleID: self newSaleID.
+	! !
+
+!methodRemoval: Sale #initializeSaleOf:withTransactionID: stamp: 'AM 12/3/2020 12:22:05'!
+initializeSaleOf: aCart withTransactionID: aTransactionID
+
+	total := aCart total.
+	soldItems := aCart items.
+	transactionID := aTransactionID.!
+!Sale methodsFor: 'initialization' stamp: 'AM 12/3/2020 12:22:24' prior: 50888036!
+initializeSaleOf: aCart withSaleID: aSaleID
+
+	total := aCart total.
+	soldItems := aCart items.
+	transactionID := aSaleID.! !
+
+!classDefinition: #Sale category: 'TusLibros' stamp: 'AM 12/3/2020 12:22:41'!
+Object subclass: #Sale
+	instanceVariableNames: 'total soldItems ID'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!Sale methodsFor: 'as yet unclassified' stamp: 'AM 12/3/2020 12:22:41' prior: 50888057!
+initializeSaleOf: aCart withSaleID: aSaleID
+
+	total := aCart total.
+	soldItems := aCart items.
+	ID := aSaleID.! !
+!Sale methodsFor: 'as yet unclassified' stamp: 'AM 12/3/2020 12:22:41' prior: 50887843!
+transactionID
+
+	^ID.! !
+!Sale methodsFor: 'transaction ID' stamp: 'AM 12/3/2020 12:23:01'!
+saleID
+
+	^ID.! !
+!ApiRestTest methodsFor: 'as yet unclassified' stamp: 'AM 12/3/2020 12:23:01' prior: 50886827!
+test03differentCheckOutsReturnDifferentTransactionIDs
+
+	| api cartID1 cartID2 sale1 sale2 |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue 
+				salesThrough: self 
+				validatingClientsThrough: self 
+				keepingTimeWith: self.
+				
+	cartID1 := api createCartFor: 'client' withPassword: 'password'.
+	cartID2 := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID1 
+		item: (testObjectsFactory itemSoldByTheStore) 
+		quantity: 1. 
+		
+	sale1 := api checkOutCart: cartID1 charging: testObjectsFactory notExpiredCreditCard.
+				
+	api addToCart: cartID2 
+		item: (testObjectsFactory itemSoldByTheStore) 
+		quantity: 1. 
+		
+	sale2 := api checkOutCart: cartID2 charging: testObjectsFactory notExpiredCreditCard.
+	
+	self deny: (sale1 saleID) = (sale2 saleID).
+! !
+
+!methodRemoval: Sale #transactionID stamp: 'AM 12/3/2020 12:23:01'!
+transactionID
+
+	^ID.!
+
+!testRun: #CashierTest #test01CanNotCheckoutAnEmptyCart stamp: 'AM 12/3/2020 12:23:24'!
+PASSED!
+
+!testRun: #CashierTest #test02CalculatedTotalIsCorrect stamp: 'AM 12/3/2020 12:23:24'!
+ERROR!
+
+!testRun: #CashierTest #test03CanNotCheckoutWithAnExpiredCreditCart stamp: 'AM 12/3/2020 12:23:24'!
+PASSED!
+
+!testRun: #CashierTest #test04CheckoutRegistersASale stamp: 'AM 12/3/2020 12:23:24'!
+ERROR!
+
+!testRun: #CashierTest #test05CashierChargesCreditCardUsingMerchantProcessor stamp: 'AM 12/3/2020 12:23:24'!
+ERROR!
+
+!testRun: #CashierTest #test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit stamp: 'AM 12/3/2020 12:23:24'!
+PASSED!
+
+!testRun: #CashierTest #test01CanNotCheckoutAnEmptyCart stamp: 'AM 12/3/2020 12:23:31'!
+PASSED!
+
+!testRun: #CashierTest #test02CalculatedTotalIsCorrect stamp: 'AM 12/3/2020 12:23:31'!
+ERROR!
+
+!testRun: #CashierTest #test03CanNotCheckoutWithAnExpiredCreditCart stamp: 'AM 12/3/2020 12:23:31'!
+PASSED!
+
+!testRun: #CashierTest #test04CheckoutRegistersASale stamp: 'AM 12/3/2020 12:23:31'!
+ERROR!
+
+!testRun: #CashierTest #test05CashierChargesCreditCardUsingMerchantProcessor stamp: 'AM 12/3/2020 12:23:31'!
+ERROR!
+
+!testRun: #CashierTest #test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit stamp: 'AM 12/3/2020 12:23:31'!
+PASSED!
+
+!testRun: #CashierTest #test01CanNotCheckoutAnEmptyCart stamp: 'AM 12/3/2020 12:23:34'!
+PASSED!
+
+!testRun: #CashierTest #test02CalculatedTotalIsCorrect stamp: 'AM 12/3/2020 12:23:34'!
+ERROR!
+
+!testRun: #CashierTest #test03CanNotCheckoutWithAnExpiredCreditCart stamp: 'AM 12/3/2020 12:23:34'!
+PASSED!
+
+!testRun: #CashierTest #test04CheckoutRegistersASale stamp: 'AM 12/3/2020 12:23:34'!
+ERROR!
+
+!testRun: #CashierTest #test05CashierChargesCreditCardUsingMerchantProcessor stamp: 'AM 12/3/2020 12:23:34'!
+ERROR!
+
+!testRun: #CashierTest #test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit stamp: 'AM 12/3/2020 12:23:34'!
+PASSED!
+
+!testRun: #CashierTest #test02CalculatedTotalIsCorrect stamp: 'AM 12/3/2020 12:23:47'!
+ERROR!
+
+Sale class
+	instanceVariableNames: 'nextSaleID'!
+
+!classDefinition: 'Sale class' category: 'TusLibros' stamp: 'AM 12/3/2020 12:24:25'!
+Sale class
+	instanceVariableNames: 'nextSaleID'!
+!Sale methodsFor: 'initialization' stamp: 'AM 12/3/2020 12:28:06' prior: 50888071!
+initializeSaleOf: aCart withSaleID: aSaleID
+
+	total := aCart total.
+	soldItems := aCart items.
+! !
+!Sale methodsFor: 'initialization' stamp: 'AM 12/3/2020 12:28:19'!
+initializeSaleOf: aCart 
+
+	total := aCart total.
+	soldItems := aCart items.
+! !
+!Sale class methodsFor: 'as yet unclassified' stamp: 'AM 12/3/2020 12:28:19' prior: 50888044!
+forCart: aCart 
+	
+	^self new initializeSaleOf: aCart .
+	! !
+
+!methodRemoval: Sale #initializeSaleOf:withSaleID: stamp: 'AM 12/3/2020 12:28:19'!
+initializeSaleOf: aCart withSaleID: aSaleID
+
+	total := aCart total.
+	soldItems := aCart items.
+!
+
+!methodRemoval: Sale class #newSaleID stamp: 'AM 12/3/2020 12:28:28'!
+newSaleID
+
+	| saleID |
+	
+	saleID := 	nextSaleID.
+	nextSaleID := nextSaleID + 1.
+	
+	^saleID.!
+
+Sale class
+	instanceVariableNames: ''!
+
+!classDefinition: 'Sale class' category: 'TusLibros' stamp: 'AM 12/3/2020 12:28:37'!
+Sale class
+	instanceVariableNames: ''!
+!Sale methodsFor: 'transaction ID' stamp: 'AM 12/3/2020 12:29:08'!
+registerID: aSaleID! !
+!ApiRest methodsFor: 'check out' stamp: 'AM 12/3/2020 12:30:27' prior: 50887395!
+checkOutCart: aCartID charging: aCreditCard 
+	
+	| cashier cartOwner sale|
+	
+	cartOwner := cartManager ownerIDForCart: aCartID.
+	
+	cashier := Cashier toCheckout: (cartManager cartWithID: aCartID)
+					charging: aCreditCard 
+					through: merchantProcessor on: (clock now) 
+					registeringOn: (self salesBookForClient: cartOwner).
+	cashier checkOut.
+	
+	cartManager removeCart: aCartID.
+	
+	sale := (self lastSaleForClient: cartOwner) registerID: aCartID.
+	^sale.
+	 ! !
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test01cantCheckOutNonExistingCart stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantAddItemsToNonExistingCart stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantListCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test02checkOutReturnsSaleInformation stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantAddItemsToCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test03differentCheckOutsReturnDifferentTransactionIDs stamp: 'AM 12/3/2020 12:30:36'!
+FAILURE!
+
+!testRun: #ApiRestTest #test04addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test04cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test05itemIsAddedToCartCorrectly stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test05listingCartResetsExpirationDeadline stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test06cartIsDeletedAfterCheckOut stamp: 'AM 12/3/2020 12:30:36'!
+PASSED!
+
+!testRun: #ApiRestTest #test03differentCheckOutsReturnDifferentTransactionIDs stamp: 'AM 12/3/2020 12:30:36'!
+FAILURE!
+!ApiRestTest methodsFor: 'check out tests' stamp: 'AM 12/3/2020 12:31:44'!
+test03differentCheckOutsReturnDifferentSaleIDs
+
+	| api cartID1 cartID2 sale1 sale2 |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue 
+				salesThrough: self 
+				validatingClientsThrough: self 
+				keepingTimeWith: self.
+				
+	cartID1 := api createCartFor: 'client' withPassword: 'password'.
+	cartID2 := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID1 
+		item: (testObjectsFactory itemSoldByTheStore) 
+		quantity: 1. 
+		
+	sale1 := api checkOutCart: cartID1 charging: testObjectsFactory notExpiredCreditCard.
+				
+	api addToCart: cartID2 
+		item: (testObjectsFactory itemSoldByTheStore) 
+		quantity: 1. 
+		
+	sale2 := api checkOutCart: cartID2 charging: testObjectsFactory notExpiredCreditCard.
+	
+	self deny: (sale1 saleID) = (sale2 saleID).
+! !
+
+!methodRemoval: ApiRestTest #test03differentCheckOutsReturnDifferentTransactionIDs stamp: 'AM 12/3/2020 12:31:44'!
+test03differentCheckOutsReturnDifferentTransactionIDs
+
+	| api cartID1 cartID2 sale1 sale2 |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue 
+				salesThrough: self 
+				validatingClientsThrough: self 
+				keepingTimeWith: self.
+				
+	cartID1 := api createCartFor: 'client' withPassword: 'password'.
+	cartID2 := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID1 
+		item: (testObjectsFactory itemSoldByTheStore) 
+		quantity: 1. 
+		
+	sale1 := api checkOutCart: cartID1 charging: testObjectsFactory notExpiredCreditCard.
+				
+	api addToCart: cartID2 
+		item: (testObjectsFactory itemSoldByTheStore) 
+		quantity: 1. 
+		
+	sale2 := api checkOutCart: cartID2 charging: testObjectsFactory notExpiredCreditCard.
+	
+	self deny: (sale1 saleID) = (sale2 saleID).
+!
+!Sale methodsFor: 'transaction ID' stamp: 'AM 12/3/2020 12:32:50' prior: 50888216!
+registerID: aSaleID
+
+	ID := aSaleID.! !
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test01cantCheckOutNonExistingCart stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantAddItemsToNonExistingCart stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantListCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test02checkOutReturnsSaleInformation stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantAddItemsToCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test03differentCheckOutsReturnDifferentSaleIDs stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test04addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test04cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/3/2020 12:32:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test05itemIsAddedToCartCorrectly stamp: 'AM 12/3/2020 12:32:54'!
+PASSED!
+
+!testRun: #ApiRestTest #test05listingCartResetsExpirationDeadline stamp: 'AM 12/3/2020 12:32:54'!
+PASSED!
+
+!testRun: #ApiRestTest #test06cartIsDeletedAfterCheckOut stamp: 'AM 12/3/2020 12:32:54'!
+PASSED!
+
+!testRun: #CashierTest #test01CanNotCheckoutAnEmptyCart stamp: 'AM 12/3/2020 12:32:58'!
+PASSED!
+
+!testRun: #CashierTest #test02CalculatedTotalIsCorrect stamp: 'AM 12/3/2020 12:32:58'!
+PASSED!
+
+!testRun: #CashierTest #test03CanNotCheckoutWithAnExpiredCreditCart stamp: 'AM 12/3/2020 12:32:58'!
+PASSED!
+
+!testRun: #CashierTest #test04CheckoutRegistersASale stamp: 'AM 12/3/2020 12:32:58'!
+PASSED!
+
+!testRun: #CashierTest #test05CashierChargesCreditCardUsingMerchantProcessor stamp: 'AM 12/3/2020 12:32:58'!
+PASSED!
+
+!testRun: #CashierTest #test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit stamp: 'AM 12/3/2020 12:32:58'!
+PASSED!
+
+!testRun: #CartTest #test01NewCartsAreCreatedEmpty stamp: 'AM 12/3/2020 12:33:01'!
+PASSED!
+
+!testRun: #CartTest #test02CanNotAddItemsThatDoNotBelongToStore stamp: 'AM 12/3/2020 12:33:01'!
+PASSED!
+
+!testRun: #CartTest #test03AfterAddingAnItemTheCartIsNotEmptyAnymore stamp: 'AM 12/3/2020 12:33:01'!
+PASSED!
+
+!testRun: #CartTest #test04CanNotAddNonPositiveNumberOfItems stamp: 'AM 12/3/2020 12:33:01'!
+PASSED!
+
+!testRun: #CartTest #test05CanNotAddMoreThanOneItemNotSellByTheStore stamp: 'AM 12/3/2020 12:33:01'!
+PASSED!
+
+!testRun: #CartTest #test06CartRemembersAddedItems stamp: 'AM 12/3/2020 12:33:01'!
+PASSED!
+
+!testRun: #CartTest #test07CartDoesNotHoldNotAddedItems stamp: 'AM 12/3/2020 12:33:01'!
+PASSED!
+
+!testRun: #CartTest #test08CartRemembersTheNumberOfAddedItems stamp: 'AM 12/3/2020 12:33:01'!
+PASSED!
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/3/2020 12:34:20'!
+test06cartsHaveDifferentIDs
+
+	| api cartID1 cartID2 |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID1 := api createCartFor: 'client' withPassword: 'password'.
+	cartID2 := api createCartFor: 'client' withPassword: 'password'.
+	
+	self deny: cartID1 = cartID2.! !
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/3/2020 12:34:28'!
+test07cartsHaveDifferentIDs
+
+	| api cartID1 cartID2 |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID1 := api createCartFor: 'client' withPassword: 'password'.
+	cartID2 := api createCartFor: 'client' withPassword: 'password'.
+	
+	self deny: cartID1 = cartID2.! !
+
+!methodRemoval: ApiRestTest #test06cartsHaveDifferentIDs stamp: 'AM 12/3/2020 12:34:28'!
+test06cartsHaveDifferentIDs
+
+	| api cartID1 cartID2 |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID1 := api createCartFor: 'client' withPassword: 'password'.
+	cartID2 := api createCartFor: 'client' withPassword: 'password'.
+	
+	self deny: cartID1 = cartID2.!
+
+!testRun: #ApiRestTest #test07cartsHaveDifferentIDs stamp: 'AM 12/3/2020 12:34:30'!
+PASSED!
+!CashierTest methodsFor: 'merchant processor protocol' stamp: 'AM 12/3/2020 12:36:11' prior: 50887331!
+debit: anAmount from: aCreditCard 
+	
+	debitBehavior value: anAmount value: aCreditCard.! !
+!CashierTest methodsFor: 'setup' stamp: 'AM 12/3/2020 12:36:20' prior: 50887324 overrides: 16927572!
+setUp 
+	
+	testObjectsFactory := StoreTestObjectsFactory new.
+	debitBehavior := [ :anAmount :aCreditCard | ].! !
+
+TestCase subclass: #CashierTest
+	instanceVariableNames: 'testObjectsFactory debitBehavior'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classDefinition: #CashierTest category: 'TusLibros' stamp: 'AM 12/3/2020 12:36:27'!
+TestCase subclass: #CashierTest
+	instanceVariableNames: 'testObjectsFactory debitBehavior'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!CashierTest methodsFor: 'merchant processor protocol' stamp: 'AM 12/3/2020 12:36:33' prior: 50888487!
+debit: anAmount from: aCreditCard 
+	
+	^debitBehavior value: anAmount value: aCreditCard.! !
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 12/3/2020 12:36:46' prior: 50887680!
+debitTotal
+
+	merchantProcessor debit: total from: creditCard.
+	
+	
+	! !
+
+Object subclass: #Cashier
+	instanceVariableNames: 'cart salesBook merchantProcessor creditCard total'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classDefinition: #Cashier category: 'TusLibros' stamp: 'AM 12/3/2020 12:36:52'!
+Object subclass: #Cashier
+	instanceVariableNames: 'cart salesBook merchantProcessor creditCard total'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!testRun: #CashierTest #test01CanNotCheckoutAnEmptyCart stamp: 'AM 12/3/2020 12:37:13'!
+PASSED!
+
+!testRun: #CashierTest #test02CalculatedTotalIsCorrect stamp: 'AM 12/3/2020 12:37:13'!
+PASSED!
+
+!testRun: #CashierTest #test03CanNotCheckoutWithAnExpiredCreditCart stamp: 'AM 12/3/2020 12:37:13'!
+PASSED!
+
+!testRun: #CashierTest #test04CheckoutRegistersASale stamp: 'AM 12/3/2020 12:37:13'!
+PASSED!
+
+!testRun: #CashierTest #test05CashierChargesCreditCardUsingMerchantProcessor stamp: 'AM 12/3/2020 12:37:13'!
+PASSED!
+
+!testRun: #CashierTest #test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit stamp: 'AM 12/3/2020 12:37:13'!
+PASSED!
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test01cantCheckOutNonExistingCart stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantAddItemsToNonExistingCart stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantListCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test02checkOutReturnsSaleInformation stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantAddItemsToCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test03differentCheckOutsReturnDifferentSaleIDs stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test04addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test04cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test05itemIsAddedToCartCorrectly stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test05listingCartResetsExpirationDeadline stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test06cartIsDeletedAfterCheckOut stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+
+!testRun: #ApiRestTest #test07cartsHaveDifferentIDs stamp: 'AM 12/3/2020 12:37:16'!
+PASSED!
+!ApiRestTest methodsFor: 'merchant processor protocol' stamp: 'AM 12/3/2020 12:37:31' prior: 50886873!
+debit: anAmount from: aCreditCard 
+	
+	debitBehavior value: anAmount value: aCreditCard.! !
+!ApiRestTest methodsFor: 'merchant processor protocol' stamp: 'AM 12/3/2020 12:37:34' prior: 50888607!
+debit: anAmount from: aCreditCard 
+	
+	^debitBehavior value: anAmount value: aCreditCard.! !
+
+TestCase subclass: #ApiRestTest
+	instanceVariableNames: 'testObjectsFactory debitBehavior clientValidationBehavior simulatedTime'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!classDefinition: #ApiRestTest category: 'TusLibros' stamp: 'AM 12/3/2020 12:37:42'!
+TestCase subclass: #ApiRestTest
+	instanceVariableNames: 'testObjectsFactory debitBehavior clientValidationBehavior simulatedTime'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+!ApiRestTest methodsFor: 'set up' stamp: 'AM 12/3/2020 12:37:51' prior: 50886856 overrides: 16927572!
+setUp 
+
+	testObjectsFactory := StoreTestObjectsFactory new.
+	debitBehavior := [ :anAmount :aCreditCard | ].
+	clientValidationBehavior := [:aClientID : aPassword | ].
+	simulatedTime := DateAndTime now.! !
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test01cantCheckOutNonExistingCart stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantAddItemsToNonExistingCart stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantListCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test02checkOutReturnsSaleInformation stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantAddItemsToCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test03differentCheckOutsReturnDifferentSaleIDs stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test04addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test04cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test05itemIsAddedToCartCorrectly stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test05listingCartResetsExpirationDeadline stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test06cartIsDeletedAfterCheckOut stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #ApiRestTest #test07cartsHaveDifferentIDs stamp: 'AM 12/3/2020 12:37:53'!
+PASSED!
+
+!testRun: #CartTest #test01NewCartsAreCreatedEmpty stamp: 'AM 12/3/2020 12:37:58'!
+PASSED!
+
+!testRun: #CartTest #test02CanNotAddItemsThatDoNotBelongToStore stamp: 'AM 12/3/2020 12:37:58'!
+PASSED!
+
+!testRun: #CartTest #test03AfterAddingAnItemTheCartIsNotEmptyAnymore stamp: 'AM 12/3/2020 12:37:58'!
+PASSED!
+
+!testRun: #CartTest #test04CanNotAddNonPositiveNumberOfItems stamp: 'AM 12/3/2020 12:37:58'!
+PASSED!
+
+!testRun: #CartTest #test05CanNotAddMoreThanOneItemNotSellByTheStore stamp: 'AM 12/3/2020 12:37:58'!
+PASSED!
+
+!testRun: #CartTest #test06CartRemembersAddedItems stamp: 'AM 12/3/2020 12:37:58'!
+PASSED!
+
+!testRun: #CartTest #test07CartDoesNotHoldNotAddedItems stamp: 'AM 12/3/2020 12:37:58'!
+PASSED!
+
+!testRun: #CartTest #test08CartRemembersTheNumberOfAddedItems stamp: 'AM 12/3/2020 12:37:58'!
+PASSED!
+
+!testRun: #CashierTest #test01CanNotCheckoutAnEmptyCart stamp: 'AM 12/3/2020 12:38:06'!
+PASSED!
+
+!testRun: #CashierTest #test02CalculatedTotalIsCorrect stamp: 'AM 12/3/2020 12:38:06'!
+PASSED!
+
+!testRun: #CashierTest #test03CanNotCheckoutWithAnExpiredCreditCart stamp: 'AM 12/3/2020 12:38:06'!
+PASSED!
+
+!testRun: #CashierTest #test04CheckoutRegistersASale stamp: 'AM 12/3/2020 12:38:06'!
+PASSED!
+
+!testRun: #CashierTest #test05CashierChargesCreditCardUsingMerchantProcessor stamp: 'AM 12/3/2020 12:38:06'!
+PASSED!
+
+!testRun: #CashierTest #test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit stamp: 'AM 12/3/2020 12:38:06'!
+PASSED!
+
+!testRun: #ApiRestTest #test01cantCheckOutCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:39:48'!
+PASSED!
+
+!testRun: #ApiRestTest #test01cantCheckOutNonExistingCart stamp: 'AM 12/3/2020 12:39:48'!
+PASSED!
+
+!testRun: #ApiRestTest #test01newCartShouldBeEmpty stamp: 'AM 12/3/2020 12:39:48'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantAddItemsToNonExistingCart stamp: 'AM 12/3/2020 12:39:48'!
+PASSED!
+
+!testRun: #ApiRestTest #test02cantListCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:39:48'!
+PASSED!
+
+!testRun: #ApiRestTest #test02checkOutReturnsSaleInformation stamp: 'AM 12/3/2020 12:39:48'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantAddItemsToCart30MinutesAfterLastAction stamp: 'AM 12/3/2020 12:39:48'!
+PASSED!
+
+!testRun: #ApiRestTest #test03cantListItemsOfNonExistingCart stamp: 'AM 12/3/2020 12:39:48'!
+PASSED!
+
+!testRun: #ApiRestTest #test03differentCheckOutsReturnDifferentSaleIDs stamp: 'AM 12/3/2020 12:39:49'!
+PASSED!
+
+!testRun: #ApiRestTest #test04addingItemsToCartResetsExpirationDeadline stamp: 'AM 12/3/2020 12:39:49'!
+PASSED!
+
+!testRun: #ApiRestTest #test04cantCreateCartForInvalidClientIDPasswordCombination stamp: 'AM 12/3/2020 12:39:49'!
+PASSED!
+
+!testRun: #ApiRestTest #test05itemIsAddedToCartCorrectly stamp: 'AM 12/3/2020 12:39:49'!
+PASSED!
+
+!testRun: #ApiRestTest #test05listingCartResetsExpirationDeadline stamp: 'AM 12/3/2020 12:39:49'!
+PASSED!
+
+!testRun: #ApiRestTest #test06cartIsDeletedAfterCheckOut stamp: 'AM 12/3/2020 12:39:49'!
+PASSED!
+
+!testRun: #ApiRestTest #test07cartsHaveDifferentIDs stamp: 'AM 12/3/2020 12:39:49'!
+PASSED!
+
+!testRun: #CartTest #test01NewCartsAreCreatedEmpty stamp: 'AM 12/3/2020 12:39:54'!
+PASSED!
+
+!testRun: #CartTest #test02CanNotAddItemsThatDoNotBelongToStore stamp: 'AM 12/3/2020 12:39:54'!
+PASSED!
+
+!testRun: #CartTest #test03AfterAddingAnItemTheCartIsNotEmptyAnymore stamp: 'AM 12/3/2020 12:39:54'!
+PASSED!
+
+!testRun: #CartTest #test04CanNotAddNonPositiveNumberOfItems stamp: 'AM 12/3/2020 12:39:54'!
+PASSED!
+
+!testRun: #CartTest #test05CanNotAddMoreThanOneItemNotSellByTheStore stamp: 'AM 12/3/2020 12:39:54'!
+PASSED!
+
+!testRun: #CartTest #test06CartRemembersAddedItems stamp: 'AM 12/3/2020 12:39:54'!
+PASSED!
+
+!testRun: #CartTest #test07CartDoesNotHoldNotAddedItems stamp: 'AM 12/3/2020 12:39:54'!
+PASSED!
+
+!testRun: #CartTest #test08CartRemembersTheNumberOfAddedItems stamp: 'AM 12/3/2020 12:39:54'!
+PASSED!
+
+!testRun: #CashierTest #test01CanNotCheckoutAnEmptyCart stamp: 'AM 12/3/2020 12:39:57'!
+PASSED!
+
+!testRun: #CashierTest #test02CalculatedTotalIsCorrect stamp: 'AM 12/3/2020 12:39:57'!
+PASSED!
+
+!testRun: #CashierTest #test03CanNotCheckoutWithAnExpiredCreditCart stamp: 'AM 12/3/2020 12:39:57'!
+PASSED!
+
+!testRun: #CashierTest #test04CheckoutRegistersASale stamp: 'AM 12/3/2020 12:39:57'!
+PASSED!
+
+!testRun: #CashierTest #test05CashierChargesCreditCardUsingMerchantProcessor stamp: 'AM 12/3/2020 12:39:57'!
+PASSED!
+
+!testRun: #CashierTest #test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit stamp: 'AM 12/3/2020 12:39:57'!
+PASSED!

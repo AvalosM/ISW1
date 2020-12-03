@@ -1,6 +1,6 @@
 !classDefinition: #ApiRestTest category: 'TusLibros'!
 TestCase subclass: #ApiRestTest
-	instanceVariableNames: 'testObjectsFactory debitBehavior clientValidationBehavior simulatedTime nextTransactionID'
+	instanceVariableNames: 'testObjectsFactory debitBehavior clientValidationBehavior simulatedTime'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
@@ -33,8 +33,8 @@ test02checkOutReturnsSaleInformation
 	self assert: (sale total) equals: (testObjectsFactory itemSoldByTheStorePrice * 1).
 	self assert: (sale soldItems) equals: (OrderedCollection with: testObjectsFactory itemSoldByTheStore).! !
 
-!ApiRestTest methodsFor: 'check out tests' stamp: 'AM 12/3/2020 00:18:30'!
-test03differentCheckOutsReturnDifferentTransactionIDs
+!ApiRestTest methodsFor: 'check out tests' stamp: 'AM 12/3/2020 12:31:44'!
+test03differentCheckOutsReturnDifferentSaleIDs
 
 	| api cartID1 cartID2 sale1 sale2 |
 	
@@ -58,16 +58,15 @@ test03differentCheckOutsReturnDifferentTransactionIDs
 		
 	sale2 := api checkOutCart: cartID2 charging: testObjectsFactory notExpiredCreditCard.
 	
-	self deny: (sale1 transactionID) = (sale2 transactionID).
+	self deny: (sale1 saleID) = (sale2 saleID).
 ! !
 
 
-!ApiRestTest methodsFor: 'set up' stamp: 'AM 12/2/2020 23:53:08'!
+!ApiRestTest methodsFor: 'set up' stamp: 'AM 12/3/2020 12:37:51'!
 setUp 
 
 	testObjectsFactory := StoreTestObjectsFactory new.
 	debitBehavior := [ :anAmount :aCreditCard | ].
-	nextTransactionID := 0.
 	clientValidationBehavior := [:aClientID : aPassword | ].
 	simulatedTime := DateAndTime now.! !
 
@@ -78,16 +77,10 @@ authenticate: aClientID withPassword: aPassword
 	clientValidationBehavior value: aClientID value: aPassword.! !
 
 
-!ApiRestTest methodsFor: 'merchant processor protocol' stamp: 'AM 12/2/2020 23:45:40'!
+!ApiRestTest methodsFor: 'merchant processor protocol' stamp: 'AM 12/3/2020 12:37:34'!
 debit: anAmount from: aCreditCard 
 	
-	| transactionID |
-	
-	debitBehavior value: anAmount value: aCreditCard.
-	transactionID := nextTransactionID.
-	nextTransactionID := nextTransactionID + 1.
-	
-	^transactionID.! !
+	^debitBehavior value: anAmount value: aCreditCard.! !
 
 
 !ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/2/2020 23:13:32'!
@@ -179,6 +172,18 @@ test06cartIsDeletedAfterCheckOut
 		should: [api listCart: cartID]
 		raise: Error
 		withMessageText: CartManager cartDoesntExistErrorDescription.! !
+
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/3/2020 12:34:28'!
+test07cartsHaveDifferentIDs
+
+	| api cartID1 cartID2 |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	
+	cartID1 := api createCartFor: 'client' withPassword: 'password'.
+	cartID2 := api createCartFor: 'client' withPassword: 'password'.
+	
+	self deny: cartID1 = cartID2.! !
 
 
 !ApiRestTest methodsFor: 'clock protocol' stamp: 'AM 12/1/2020 17:46:02'!
@@ -395,7 +400,7 @@ setUp
 
 !classDefinition: #CashierTest category: 'TusLibros'!
 TestCase subclass: #CashierTest
-	instanceVariableNames: 'testObjectsFactory debitBehavior nextTransactionID'
+	instanceVariableNames: 'testObjectsFactory debitBehavior'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
@@ -528,24 +533,17 @@ test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit
 			self assert: salesBook isEmpty ]! !
 
 
-!CashierTest methodsFor: 'setup' stamp: 'AM 12/2/2020 23:52:54'!
+!CashierTest methodsFor: 'setup' stamp: 'AM 12/3/2020 12:36:20'!
 setUp 
 	
 	testObjectsFactory := StoreTestObjectsFactory new.
-	nextTransactionID := 0.
 	debitBehavior := [ :anAmount :aCreditCard | ].! !
 
 
-!CashierTest methodsFor: 'merchant processor protocol' stamp: 'AM 12/2/2020 23:45:31'!
+!CashierTest methodsFor: 'merchant processor protocol' stamp: 'AM 12/3/2020 12:36:33'!
 debit: anAmount from: aCreditCard 
 	
-	| transactionID |
-	
-	debitBehavior value: anAmount value: aCreditCard.
-	transactionID := nextTransactionID.
-	nextTransactionID := nextTransactionID + 1.
-	
-	^transactionID.! !
+	^debitBehavior value: anAmount value: aCreditCard.! !
 
 
 !classDefinition: #ApiRest category: 'TusLibros'!
@@ -597,10 +595,10 @@ listCart: aCartId
 	^cartManager listCart: aCartId.! !
 
 
-!ApiRest methodsFor: 'check out' stamp: 'AM 12/3/2020 00:04:50'!
+!ApiRest methodsFor: 'check out' stamp: 'AM 12/3/2020 12:30:27'!
 checkOutCart: aCartID charging: aCreditCard 
 	
-	| cashier cartOwner |
+	| cashier cartOwner sale|
 	
 	cartOwner := cartManager ownerIDForCart: aCartID.
 	
@@ -612,7 +610,8 @@ checkOutCart: aCartID charging: aCreditCard
 	
 	cartManager removeCart: aCartID.
 	
-	^self lastSaleForClient: cartOwner.
+	sale := (self lastSaleForClient: cartOwner) registerID: aCartID.
+	^sale.
 	 ! !
 
 !ApiRest methodsFor: 'check out' stamp: 'AM 12/3/2020 00:01:53'!
@@ -873,7 +872,7 @@ for: anApi
 
 !classDefinition: #Cashier category: 'TusLibros'!
 Object subclass: #Cashier
-	instanceVariableNames: 'cart salesBook merchantProcessor creditCard total transactionID'
+	instanceVariableNames: 'cart salesBook merchantProcessor creditCard total'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
@@ -884,16 +883,16 @@ calculateTotal
 	total := cart total.
 	! !
 
-!Cashier methodsFor: 'checkout - private' stamp: 'AM 12/2/2020 23:49:12'!
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 12/3/2020 12:18:20'!
 createSale
 	
-	^Sale forCart: cart withTransactionID: transactionID.
+	^Sale forCart: cart .
 ! !
 
-!Cashier methodsFor: 'checkout - private' stamp: 'AM 12/2/2020 23:48:11'!
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 12/3/2020 12:36:46'!
 debitTotal
 
-	transactionID :=  merchantProcessor debit: total from: creditCard.
+	merchantProcessor debit: total from: creditCard.
 	
 	
 	! !
@@ -1027,15 +1026,20 @@ assertValidOwnerName: anOwnerNameString
 
 !classDefinition: #Sale category: 'TusLibros'!
 Object subclass: #Sale
-	instanceVariableNames: 'total soldItems transactionID'
+	instanceVariableNames: 'total soldItems ID'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Sale methodsFor: 'transaction ID' stamp: 'AM 12/2/2020 23:51:45'!
-transactionID
+!Sale methodsFor: 'transaction ID' stamp: 'AM 12/3/2020 12:32:50'!
+registerID: aSaleID
 
-	^transactionID.! !
+	ID := aSaleID.! !
+
+!Sale methodsFor: 'transaction ID' stamp: 'AM 12/3/2020 12:23:01'!
+saleID
+
+	^ID.! !
 
 
 !Sale methodsFor: 'items' stamp: 'AM 11/30/2020 18:49:03'!
@@ -1050,12 +1054,12 @@ total
 	^ total! !
 
 
-!Sale methodsFor: 'initialization' stamp: 'AM 12/2/2020 23:51:19'!
-initializeSaleOf: aCart withTransactionID: aTransactionID
+!Sale methodsFor: 'initialization' stamp: 'AM 12/3/2020 12:28:19'!
+initializeSaleOf: aCart 
 
 	total := aCart total.
 	soldItems := aCart items.
-	transactionID := aTransactionID.! !
+! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1063,10 +1067,10 @@ initializeSaleOf: aCart withTransactionID: aTransactionID
 Sale class
 	instanceVariableNames: ''!
 
-!Sale class methodsFor: 'instance creation' stamp: 'AM 12/2/2020 23:50:17'!
-forCart: aCart withTransactionID: aTransactionID
+!Sale class methodsFor: 'instance creation' stamp: 'AM 12/3/2020 12:28:19'!
+forCart: aCart 
 	
-	^self new initializeSaleOf: aCart withTransactionID: aTransactionID.
+	^self new initializeSaleOf: aCart .
 	! !
 
 
