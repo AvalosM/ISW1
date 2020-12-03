@@ -1,16 +1,16 @@
 !classDefinition: #ApiRestTest category: 'TusLibros'!
 TestCase subclass: #ApiRestTest
-	instanceVariableNames: 'testObjectsFactory debitBehavior clientValidationBehavior simulatedTime'
+	instanceVariableNames: 'testObjectsFactory debitBehavior clientValidationBehavior simulatedTime nextTransactionID'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!ApiRestTest methodsFor: 'check out tests' stamp: 'AM 12/1/2020 18:11:57'!
+!ApiRestTest methodsFor: 'check out tests' stamp: 'AM 12/2/2020 23:13:32'!
 test01cantCheckOutNonExistingCart
 
 	| api |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	self 
 		should:[api checkOutCart: 1 charging: testObjectsFactory notExpiredCreditCard]
@@ -19,26 +19,55 @@ test01cantCheckOutNonExistingCart
 	
 	! !
 
-!ApiRestTest methodsFor: 'check out tests' stamp: 'AM 12/1/2020 18:12:02'!
+!ApiRestTest methodsFor: 'check out tests' stamp: 'AM 12/3/2020 00:12:53'!
 test02checkOutReturnsSaleInformation
 
-	| api cartID expected sale |
+	| api cartID sale |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	cartID := api createCartFor: 'client' withPassword: 'password'.
 	
-	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api addToCart: cartID item: (testObjectsFactory itemSoldByTheStore) quantity: 1. 
 	sale := api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
-	expected := OrderedCollection with: sale.
 	
-	self assert: expected equals: (api listPurchasesFor: 'client'). ! !
+	self assert: (sale total) equals: (testObjectsFactory itemSoldByTheStorePrice * 1).
+	self assert: (sale soldItems) equals: (OrderedCollection with: testObjectsFactory itemSoldByTheStore).! !
+
+!ApiRestTest methodsFor: 'check out tests' stamp: 'AM 12/3/2020 00:18:30'!
+test03differentCheckOutsReturnDifferentTransactionIDs
+
+	| api cartID1 cartID2 sale1 sale2 |
+	
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue 
+				salesThrough: self 
+				validatingClientsThrough: self 
+				keepingTimeWith: self.
+				
+	cartID1 := api createCartFor: 'client' withPassword: 'password'.
+	cartID2 := api createCartFor: 'client' withPassword: 'password'.
+	
+	api addToCart: cartID1 
+		item: (testObjectsFactory itemSoldByTheStore) 
+		quantity: 1. 
+		
+	sale1 := api checkOutCart: cartID1 charging: testObjectsFactory notExpiredCreditCard.
+				
+	api addToCart: cartID2 
+		item: (testObjectsFactory itemSoldByTheStore) 
+		quantity: 1. 
+		
+	sale2 := api checkOutCart: cartID2 charging: testObjectsFactory notExpiredCreditCard.
+	
+	self deny: (sale1 transactionID) = (sale2 transactionID).
+! !
 
 
-!ApiRestTest methodsFor: 'set up' stamp: 'AM 12/1/2020 17:01:13'!
+!ApiRestTest methodsFor: 'set up' stamp: 'AM 12/2/2020 23:53:08'!
 setUp 
 
 	testObjectsFactory := StoreTestObjectsFactory new.
 	debitBehavior := [ :anAmount :aCreditCard | ].
+	nextTransactionID := 0.
 	clientValidationBehavior := [:aClientID : aPassword | ].
 	simulatedTime := DateAndTime now.! !
 
@@ -49,18 +78,24 @@ authenticate: aClientID withPassword: aPassword
 	clientValidationBehavior value: aClientID value: aPassword.! !
 
 
-!ApiRestTest methodsFor: 'merchant processor protocol' stamp: 'AM 11/29/2020 15:35:33'!
+!ApiRestTest methodsFor: 'merchant processor protocol' stamp: 'AM 12/2/2020 23:45:40'!
 debit: anAmount from: aCreditCard 
+	
+	| transactionID |
+	
+	debitBehavior value: anAmount value: aCreditCard.
+	transactionID := nextTransactionID.
+	nextTransactionID := nextTransactionID + 1.
+	
+	^transactionID.! !
 
-	^debitBehavior value: anAmount value: aCreditCard ! !
 
-
-!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/1/2020 17:06:46'!
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/2/2020 23:13:32'!
 test01newCartShouldBeEmpty
 
 	| api cartID expected |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	cartID := api createCartFor: 'client' withPassword: 'password'.
 	
@@ -68,27 +103,27 @@ test01newCartShouldBeEmpty
 	
 	self assert: expected equals: (api listCart: cartID).! !
 
-!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/1/2020 17:06:51'!
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/2/2020 23:14:05'!
 test02cantAddItemsToNonExistingCart
 
 	| api |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	self 
-		should:[api addToCart: 1 item: (testObjectsFactory itemSellByTheStore) quantity: 1]
+		should:[api addToCart: 1 item: (testObjectsFactory itemSoldByTheStore) quantity: 1]
 		raise: Error 
 		withMessageText: CartManager cartDoesntExistErrorDescription.
 		
 	self assert: (api hasNoActiveCarts).
 	! !
 
-!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/1/2020 17:06:55'!
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/2/2020 23:13:32'!
 test03cantListItemsOfNonExistingCart
 
 	| api |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	self 
 		should:[api listCart: 1]
@@ -97,12 +132,12 @@ test03cantListItemsOfNonExistingCart
 	
 	! !
 
-!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/1/2020 18:09:33'!
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/2/2020 23:13:32'!
 test04cantCreateCartForInvalidClientIDPasswordCombination
 
 	| api |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	clientValidationBehavior := [:client :password | self error: ApiRest invalidIDOrPasswordErrorDescription].
 	
@@ -113,31 +148,31 @@ test04cantCreateCartForInvalidClientIDPasswordCombination
 		
 	self assert: api hasNoActiveCarts.! !
 
-!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/1/2020 18:09:39'!
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/2/2020 23:14:05'!
 test05itemIsAddedToCartCorrectly
 
 	| api cartID expected |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	cartID := api createCartFor: 'client' withPassword: 'password'.
 	
-	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api addToCart: cartID item: (testObjectsFactory itemSoldByTheStore) quantity: 1. 
 	
-	expected := OrderedCollection with: testObjectsFactory itemSellByTheStore.
+	expected := OrderedCollection with: testObjectsFactory itemSoldByTheStore.
 	
 	self assert: expected equals: (api listCart: cartID).! !
 
-!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/1/2020 18:14:50'!
+!ApiRestTest methodsFor: 'cart management tests' stamp: 'AM 12/2/2020 23:14:05'!
 test06cartIsDeletedAfterCheckOut
 
 	| api cartID |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	cartID := api createCartFor: 'client' withPassword: 'password'.
 	
-	api addToCart: cartID item: (testObjectsFactory itemSellByTheStore) quantity: 1. 
+	api addToCart: cartID item: (testObjectsFactory itemSoldByTheStore) quantity: 1. 
 	api checkOutCart: cartID charging: testObjectsFactory notExpiredCreditCard.
 	
 	self
@@ -162,15 +197,15 @@ now
 	^simulatedTime.! !
 
 
-!ApiRestTest methodsFor: 'time keeping tests' stamp: 'AM 12/1/2020 18:03:59'!
+!ApiRestTest methodsFor: 'time keeping tests' stamp: 'AM 12/2/2020 23:14:05'!
 test01cantCheckOutCart30MinutesAfterLastAction
 
 	| api cartID |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	cartID := api createCartFor: 'client' withPassword: 'password'.
-	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	api addToCart: cartID item: testObjectsFactory itemSoldByTheStore quantity: 1.
 	
 	self leap30MinutesIntoTheFuture.
 	
@@ -183,12 +218,12 @@ test01cantCheckOutCart30MinutesAfterLastAction
 	
 	! !
 
-!ApiRestTest methodsFor: 'time keeping tests' stamp: 'AM 12/1/2020 18:03:50'!
+!ApiRestTest methodsFor: 'time keeping tests' stamp: 'AM 12/2/2020 23:13:32'!
 test02cantListCart30MinutesAfterLastAction
 
 	| api cartID |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	cartID := api createCartFor: 'client' withPassword: 'password'.
 	
@@ -202,49 +237,49 @@ test02cantListCart30MinutesAfterLastAction
 	
 	! !
 
-!ApiRestTest methodsFor: 'time keeping tests' stamp: 'AM 12/1/2020 18:05:30'!
+!ApiRestTest methodsFor: 'time keeping tests' stamp: 'AM 12/2/2020 23:14:05'!
 test03cantAddItemsToCart30MinutesAfterLastAction
 
 	| api cartID |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	cartID := api createCartFor: 'client' withPassword: 'password'.
 	
 	self leap30MinutesIntoTheFuture.
 	
 	self
-		should: [api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1]
+		should: [api addToCart: cartID item: testObjectsFactory itemSoldByTheStore quantity: 1]
 		raise: Error
 		withMessageText: CartManager cartExpiredErrorDescription.
 
 	
 	! !
 
-!ApiRestTest methodsFor: 'time keeping tests' stamp: 'AM 12/1/2020 18:03:08'!
+!ApiRestTest methodsFor: 'time keeping tests' stamp: 'AM 12/2/2020 23:14:04'!
 test04addingItemsToCartResetsExpirationDeadline
 
 	| api cartID expected |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	cartID := api createCartFor: 'client' withPassword: 'password'.
 	self leap15MinutesIntoTheFuture.
 	
-	api addToCart: cartID item: testObjectsFactory itemSellByTheStore quantity: 1.
+	api addToCart: cartID item: testObjectsFactory itemSoldByTheStore quantity: 1.
 	self leap15MinutesIntoTheFuture.
 	
-	expected := OrderedCollection with: (testObjectsFactory itemSellByTheStore).	
+	expected := OrderedCollection with: (testObjectsFactory itemSoldByTheStore).	
 	self assert: (api listCart: cartID) equals: expected.
 	
 	! !
 
-!ApiRestTest methodsFor: 'time keeping tests' stamp: 'AM 12/1/2020 18:03:15'!
+!ApiRestTest methodsFor: 'time keeping tests' stamp: 'AM 12/2/2020 23:13:32'!
 test05listingCartResetsExpirationDeadline
 
 	| api cartID expected |
 	
-	api := ApiRest withCatalogue: testObjectsFactory defaultCatalog salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
+	api := ApiRest withCatalogue: testObjectsFactory defaultCatalogue salesThrough: self validatingClientsThrough: self keepingTimeWith: self.
 	
 	cartID := api createCartFor: 'client' withPassword: 'password'.
 	self leap15MinutesIntoTheFuture.
@@ -270,7 +305,7 @@ test01NewCartsAreCreatedEmpty
 
 	self assert: testObjectsFactory createCart isEmpty! !
 
-!CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:10'!
+!CartTest methodsFor: 'tests' stamp: 'AM 12/2/2020 23:14:50'!
 test02CanNotAddItemsThatDoNotBelongToStore
 
 	| cart |
@@ -278,23 +313,23 @@ test02CanNotAddItemsThatDoNotBelongToStore
 	cart := testObjectsFactory createCart.
 	
 	self 
-		should: [ cart add: testObjectsFactory itemNotSellByTheStore ]
+		should: [ cart add: testObjectsFactory itemNotSoldByTheStore ]
 		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = cart invalidItemErrorMessage.
 			self assert: cart isEmpty ]! !
 
-!CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:10'!
+!CartTest methodsFor: 'tests' stamp: 'AM 12/2/2020 23:14:05'!
 test03AfterAddingAnItemTheCartIsNotEmptyAnymore
 
 	| cart |
 	
 	cart := testObjectsFactory createCart.
 	
-	cart add: testObjectsFactory itemSellByTheStore.
+	cart add: testObjectsFactory itemSoldByTheStore.
 	self deny: cart isEmpty ! !
 
-!CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:10'!
+!CartTest methodsFor: 'tests' stamp: 'AM 12/2/2020 23:14:04'!
 test04CanNotAddNonPositiveNumberOfItems
 
 	| cart |
@@ -302,13 +337,13 @@ test04CanNotAddNonPositiveNumberOfItems
 	cart := testObjectsFactory createCart.
 	
 	self 
-		should: [cart add: 0 of: testObjectsFactory itemSellByTheStore ]
+		should: [cart add: 0 of: testObjectsFactory itemSoldByTheStore ]
 		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = cart invalidQuantityErrorMessage.
 			self assert: cart isEmpty ]! !
 
-!CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:10'!
+!CartTest methodsFor: 'tests' stamp: 'AM 12/2/2020 23:14:50'!
 test05CanNotAddMoreThanOneItemNotSellByTheStore
 
 	| cart |
@@ -316,40 +351,40 @@ test05CanNotAddMoreThanOneItemNotSellByTheStore
 	cart := testObjectsFactory createCart.
 	
 	self 
-		should: [cart add: 2 of: testObjectsFactory itemNotSellByTheStore  ]
+		should: [cart add: 2 of: testObjectsFactory itemNotSoldByTheStore  ]
 		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = cart invalidItemErrorMessage.
 			self assert: cart isEmpty ]! !
 
-!CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:11'!
+!CartTest methodsFor: 'tests' stamp: 'AM 12/2/2020 23:14:05'!
 test06CartRemembersAddedItems
 
 	| cart |
 	
 	cart := testObjectsFactory createCart.
 	
-	cart add: testObjectsFactory itemSellByTheStore.
-	self assert: (cart includes: testObjectsFactory itemSellByTheStore)! !
+	cart add: testObjectsFactory itemSoldByTheStore.
+	self assert: (cart includes: testObjectsFactory itemSoldByTheStore)! !
 
-!CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:11'!
+!CartTest methodsFor: 'tests' stamp: 'AM 12/2/2020 23:14:05'!
 test07CartDoesNotHoldNotAddedItems
 
 	| cart |
 	
 	cart := testObjectsFactory createCart.
 	
-	self deny: (cart includes: testObjectsFactory itemSellByTheStore)! !
+	self deny: (cart includes: testObjectsFactory itemSoldByTheStore)! !
 
-!CartTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:11'!
+!CartTest methodsFor: 'tests' stamp: 'AM 12/2/2020 23:14:05'!
 test08CartRemembersTheNumberOfAddedItems
 
 	| cart |
 	
 	cart := testObjectsFactory createCart.
 	
-	cart add: 2 of: testObjectsFactory itemSellByTheStore.
-	self assert: (cart occurrencesOf: testObjectsFactory itemSellByTheStore) = 2! !
+	cart add: 2 of: testObjectsFactory itemSoldByTheStore.
+	self assert: (cart occurrencesOf: testObjectsFactory itemSoldByTheStore) = 2! !
 
 
 !CartTest methodsFor: 'setup' stamp: 'HernanWilkinson 6/17/2013 18:09'!
@@ -360,12 +395,12 @@ setUp
 
 !classDefinition: #CashierTest category: 'TusLibros'!
 TestCase subclass: #CashierTest
-	instanceVariableNames: 'testObjectsFactory debitBehavior'
+	instanceVariableNames: 'testObjectsFactory debitBehavior nextTransactionID'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!CashierTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:50'!
+!CashierTest methodsFor: 'tests' stamp: 'AM 12/3/2020 00:04:50'!
 test01CanNotCheckoutAnEmptyCart
 
 	| salesBook |
@@ -375,7 +410,7 @@ test01CanNotCheckoutAnEmptyCart
 		should: [ Cashier 
 			toCheckout: testObjectsFactory createCart 
 			charging: testObjectsFactory notExpiredCreditCard 
-			throught: self
+			through: self
 			on: testObjectsFactory today
 			registeringOn:  salesBook ]
 		raise: Error - MessageNotUnderstood
@@ -383,37 +418,37 @@ test01CanNotCheckoutAnEmptyCart
 			self assert: anError messageText = Cashier cartCanNotBeEmptyErrorMessage.
 			self assert: salesBook isEmpty ]! !
 
-!CashierTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:51'!
+!CashierTest methodsFor: 'tests' stamp: 'AM 12/3/2020 00:04:50'!
 test02CalculatedTotalIsCorrect
 
 	| cart cashier |
 	
 	cart := testObjectsFactory createCart.
-	cart add: 2 of: testObjectsFactory itemSellByTheStore.
+	cart add: 2 of: testObjectsFactory itemSoldByTheStore.
 	
 	cashier :=  Cashier
 		toCheckout: cart 
 		charging: testObjectsFactory notExpiredCreditCard 
-		throught: self
+		through: self
 		on: testObjectsFactory today 
 		registeringOn: OrderedCollection new.
 		
-	self assert: cashier checkOut = (testObjectsFactory itemSellByTheStorePrice * 2)! !
+	self assert: cashier checkOut = (testObjectsFactory itemSoldByTheStorePrice * 2)! !
 
-!CashierTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:51'!
+!CashierTest methodsFor: 'tests' stamp: 'AM 12/3/2020 00:04:50'!
 test03CanNotCheckoutWithAnExpiredCreditCart
 
 	| cart salesBook |
 
 	cart := testObjectsFactory createCart.
-	cart add: testObjectsFactory itemSellByTheStore.
+	cart add: testObjectsFactory itemSoldByTheStore.
 	salesBook := OrderedCollection new.
 	
 	self
 		should: [ Cashier 
 				toCheckout: cart 
 				charging: testObjectsFactory expiredCreditCard 
-				throught: self
+				through: self
 				on: testObjectsFactory today
 				registeringOn: salesBook ]
 		raise: Error - MessageNotUnderstood
@@ -421,19 +456,19 @@ test03CanNotCheckoutWithAnExpiredCreditCart
 			self assert: anError messageText = Cashier canNotChargeAnExpiredCreditCardErrorMessage.
 			self assert: salesBook isEmpty ]! !
 
-!CashierTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 19:04'!
+!CashierTest methodsFor: 'tests' stamp: 'AM 12/3/2020 00:04:50'!
 test04CheckoutRegistersASale
 
 	| cart cashier salesBook total |
 
 	cart := testObjectsFactory createCart.
-	cart add: testObjectsFactory itemSellByTheStore.
+	cart add: testObjectsFactory itemSoldByTheStore.
 	salesBook := OrderedCollection new.
  
 	cashier:= Cashier 
 		toCheckout: cart 
 		charging: testObjectsFactory notExpiredCreditCard
-		throught: self
+		through: self
 		on: testObjectsFactory today
 		registeringOn: salesBook.
 		
@@ -442,20 +477,20 @@ test04CheckoutRegistersASale
 	self assert: salesBook size = 1.
 	self assert: salesBook first total = total.! !
 
-!CashierTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 19:00'!
+!CashierTest methodsFor: 'tests' stamp: 'AM 12/3/2020 00:04:50'!
 test05CashierChargesCreditCardUsingMerchantProcessor
 
 	| cart cashier salesBook total creditCard debitedAmout debitedCreditCard  |
 
 	cart := testObjectsFactory createCart.
-	cart add: testObjectsFactory itemSellByTheStore.
+	cart add: testObjectsFactory itemSoldByTheStore.
 	creditCard := testObjectsFactory notExpiredCreditCard.
 	salesBook := OrderedCollection new.
  
 	cashier:= Cashier 
 		toCheckout: cart 
 		charging: creditCard
-		throught: self
+		through: self
 		on: testObjectsFactory today
 		registeringOn: salesBook.
 		
@@ -467,13 +502,13 @@ test05CashierChargesCreditCardUsingMerchantProcessor
 	self assert: debitedCreditCard = creditCard.
 	self assert: debitedAmout = total.! !
 
-!CashierTest methodsFor: 'tests' stamp: 'HernanWilkinson 6/17/2013 18:59'!
+!CashierTest methodsFor: 'tests' stamp: 'AM 12/3/2020 00:04:50'!
 test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit
 
 	| cart cashier salesBook creditCard |
 
 	cart := testObjectsFactory createCart.
-	cart add: testObjectsFactory itemSellByTheStore.
+	cart add: testObjectsFactory itemSoldByTheStore.
 	creditCard := testObjectsFactory notExpiredCreditCard.
 	salesBook := OrderedCollection new.
  	debitBehavior := [ :anAmount :aCreditCard | self error: Cashier creditCardHasNoCreditErrorMessage].
@@ -481,7 +516,7 @@ test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit
 	cashier:= Cashier 
 		toCheckout: cart 
 		charging: creditCard
-		throught: self
+		through: self
 		on: testObjectsFactory today
 		registeringOn: salesBook.
 		
@@ -493,17 +528,24 @@ test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit
 			self assert: salesBook isEmpty ]! !
 
 
-!CashierTest methodsFor: 'setup' stamp: 'HernanWilkinson 6/17/2013 19:03'!
+!CashierTest methodsFor: 'setup' stamp: 'AM 12/2/2020 23:52:54'!
 setUp 
-
+	
 	testObjectsFactory := StoreTestObjectsFactory new.
-	debitBehavior := [ :anAmount :aCreditCard | ]! !
+	nextTransactionID := 0.
+	debitBehavior := [ :anAmount :aCreditCard | ].! !
 
 
-!CashierTest methodsFor: 'merchant processor protocol' stamp: 'HernanWilkinson 6/17/2013 19:02'!
+!CashierTest methodsFor: 'merchant processor protocol' stamp: 'AM 12/2/2020 23:45:31'!
 debit: anAmount from: aCreditCard 
-
-	^debitBehavior value: anAmount value: aCreditCard ! !
+	
+	| transactionID |
+	
+	debitBehavior value: anAmount value: aCreditCard.
+	transactionID := nextTransactionID.
+	nextTransactionID := nextTransactionID + 1.
+	
+	^transactionID.! !
 
 
 !classDefinition: #ApiRest category: 'TusLibros'!
@@ -530,10 +572,12 @@ hasNoActiveCarts
 	^cartManager hasNoActiveCarts.! !
 
 
-!ApiRest methodsFor: 'cart' stamp: 'AM 12/1/2020 16:21:40'!
+!ApiRest methodsFor: 'cart' stamp: 'AM 12/3/2020 00:05:36'!
 addToCart: aCartID item: anItemID quantity: aQuantity
 
-	cartManager addToCart: aCartID item: anItemID quantity: aQuantity.
+	cartManager addToCart: aCartID 
+				item: anItemID 
+				quantity: aQuantity.
 	
 	! !
 
@@ -553,28 +597,39 @@ listCart: aCartId
 	^cartManager listCart: aCartId.! !
 
 
-!ApiRest methodsFor: 'check out' stamp: 'AM 12/1/2020 18:17:04'!
+!ApiRest methodsFor: 'check out' stamp: 'AM 12/3/2020 00:04:50'!
 checkOutCart: aCartID charging: aCreditCard 
 	
-	| cashier cartOwner clientSalesBook cartToCheckOut sale |
+	| cashier cartOwner |
 	
-	cartToCheckOut := cartManager cartWithID: aCartID.
 	cartOwner := cartManager ownerIDForCart: aCartID.
-	clientSalesBook := salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new].
 	
-	cashier := Cashier toCheckout: cartToCheckOut charging: aCreditCard throught: merchantProcessor on: (clock now) registeringOn: clientSalesBook.
-	sale := cashier checkOut.
+	cashier := Cashier toCheckout: (cartManager cartWithID: aCartID)
+					charging: aCreditCard 
+					through: merchantProcessor on: (clock now) 
+					registeringOn: (self salesBookForClient: cartOwner).
+	cashier checkOut.
 	
 	cartManager removeCart: aCartID.
 	
-	^sale.
+	^self lastSaleForClient: cartOwner.
 	 ! !
 
+!ApiRest methodsFor: 'check out' stamp: 'AM 12/3/2020 00:01:53'!
+salesBookForClient: cartOwner
 
-!ApiRest methodsFor: 'clients' stamp: 'AM 12/1/2020 17:43:44'!
+	^ salesBook at: cartOwner ifAbsent: [salesBook at: cartOwner put: OrderedCollection new]! !
+
+
+!ApiRest methodsFor: 'clients' stamp: 'AM 12/3/2020 00:07:48'!
+lastSaleForClient: aClientID
+	
+	^(self salesBookForClient: aClientID) last.! !
+
+!ApiRest methodsFor: 'clients' stamp: 'AM 12/3/2020 00:07:05'!
 listPurchasesFor: aClientID
 
-	^salesBook at: aClientID ifAbsent: [salesBook at: aClientID put: OrderedCollection new.].! !
+	^self salesBookForClient: aClientID.! !
 
 
 !ApiRest methodsFor: 'time keeping protocol' stamp: 'AM 12/1/2020 17:33:14'!
@@ -588,10 +643,13 @@ timeNow
 ApiRest class
 	instanceVariableNames: ''!
 
-!ApiRest class methodsFor: 'instance creation' stamp: 'AM 12/1/2020 17:05:54'!
+!ApiRest class methodsFor: 'instance creation' stamp: 'AM 12/3/2020 00:05:12'!
 withCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock 
 	
-	^self new initializeWithCatalogue: aPriceCatalogue salesThrough: aMerchantProcessor validatingClientsThrough: aClientPasswordValidator keepingTimeWith: aClock.! !
+	^self new initializeWithCatalogue: aPriceCatalogue 
+					salesThrough: aMerchantProcessor 
+					validatingClientsThrough: aClientPasswordValidator 
+					keepingTimeWith: aClock.! !
 
 
 !ApiRest class methodsFor: 'error descriptions' stamp: 'AM 11/29/2020 16:16:24'!
@@ -602,7 +660,7 @@ invalidIDOrPasswordErrorDescription
 
 !classDefinition: #Cart category: 'TusLibros'!
 Object subclass: #Cart
-	instanceVariableNames: 'catalog items'
+	instanceVariableNames: 'catalogue items'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
@@ -618,10 +676,10 @@ invalidQuantityErrorMessage
 	^'Invalid number of items'! !
 
 
-!Cart methodsFor: 'assertions' stamp: 'HernanWilkinson 6/17/2013 18:06'!
+!Cart methodsFor: 'assertions' stamp: 'AM 12/2/2020 23:38:06'!
 assertIsValidItem: anItem
 
-	(catalog includesKey: anItem) ifFalse: [ self error: self invalidItemErrorMessage ]! !
+	(catalogue includesKey: anItem) ifFalse: [ self error: self invalidItemErrorMessage ]! !
 
 !Cart methodsFor: 'assertions' stamp: 'HernanWilkinson 6/17/2013 17:51'!
 assertIsValidQuantity: aQuantity
@@ -629,10 +687,10 @@ assertIsValidQuantity: aQuantity
 	aQuantity strictlyPositive ifFalse: [ self error: self invalidQuantityErrorMessage ]! !
 
 
-!Cart methodsFor: 'initialization' stamp: 'HernanWilkinson 6/17/2013 17:48'!
+!Cart methodsFor: 'initialization' stamp: 'AM 12/2/2020 23:38:06'!
 initializeAcceptingItemsOf: aCatalog
 
-	catalog := aCatalog.
+	catalogue := aCatalog.
 	items := OrderedCollection new.! !
 
 
@@ -641,11 +699,6 @@ occurrencesOf: anItem
 
 	^items occurrencesOf: anItem  ! !
 
-
-!Cart methodsFor: 'item queries' stamp: 'AM 11/29/2020 16:04:39'!
-addItemsTo: anItemCollection
-
-	items do: [:item | anItemCollection add: item copy].! !
 
 !Cart methodsFor: 'item queries' stamp: 'AM 11/30/2020 18:54:03'!
 items
@@ -664,10 +717,10 @@ isEmpty
 	^items isEmpty ! !
 
 
-!Cart methodsFor: 'total' stamp: 'HernanWilkinson 6/17/2013 19:09'!
+!Cart methodsFor: 'total' stamp: 'AM 12/2/2020 23:38:06'!
 total
 
-	^ items sum: [ :anItem | catalog at: anItem ]! !
+	^ items sum: [ :anItem | catalogue at: anItem ]! !
 
 
 !Cart methodsFor: 'adding' stamp: 'HernanWilkinson 6/17/2013 17:44'!
@@ -702,12 +755,12 @@ Object subclass: #CartManager
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!CartManager methodsFor: 'time keeping protocol' stamp: 'AM 12/1/2020 17:42:18'!
-removeIfExpiredAndRaiseExeption: aCartID
+!CartManager methodsFor: 'time keeping protocol' stamp: 'AM 12/2/2020 23:26:39'!
+assertIfExpiredAndRemoveIfTrue: aCartID
 
 	((cartLastActionTimestamp at: aCartID) > ((api timeNow) - 30 minutes)) ifFalse: [ activeCarts removeKey: aCartID.
-														     cartLastActionTimestamp removeKey: aCartID.
-															self signalCartExpired.]! !
+														     			cartLastActionTimestamp removeKey: aCartID.
+																	self signalCartExpired.]! !
 
 !CartManager methodsFor: 'time keeping protocol' stamp: 'AM 12/1/2020 18:01:55'!
 updateTimeFor: aCartID
@@ -715,16 +768,16 @@ updateTimeFor: aCartID
 	^ cartLastActionTimestamp at: aCartID put: api timeNow.! !
 
 
-!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 17:31:24'!
+!CartManager methodsFor: 'cart queries' stamp: 'AM 12/2/2020 23:26:39'!
 cartWithID: aCartID
 	
 	| cart |
 	
 	cart := (activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.
-	self removeIfExpiredAndRaiseExeption: aCartID.
+	self assertIfExpiredAndRemoveIfTrue: aCartID.
 	^cart.! !
 
-!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 18:00:58'!
+!CartManager methodsFor: 'cart queries' stamp: 'AM 12/1/2020 18:00:58'!
 listCart: aCartID
 	
 	| cartToList |
@@ -734,7 +787,7 @@ listCart: aCartID
 	
 	^cartToList items.! !
 
-!CartManager methodsFor: 'accessing' stamp: 'AM 12/1/2020 16:49:16'!
+!CartManager methodsFor: 'cart queries' stamp: 'AM 12/1/2020 16:49:16'!
 ownerIDForCart: aCartID
 
 	^(activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) key.! !
@@ -753,13 +806,13 @@ addCart: aCart forClient: aClientID
 	^cartID.
 	! !
 
-!CartManager methodsFor: 'adding/removing' stamp: 'AM 12/1/2020 18:06:50'!
+!CartManager methodsFor: 'adding/removing' stamp: 'AM 12/2/2020 23:26:39'!
 addToCart: aCartID item: anItemID quantity: aQuantity
 
 	| cart |
 	
 	cart := (activeCarts at: aCartID ifAbsent: [self signalNonExistentCart]) value.
-	self removeIfExpiredAndRaiseExeption: aCartID.
+	self assertIfExpiredAndRemoveIfTrue: aCartID.
 	self updateTimeFor: aCartID.
 	cart add: aQuantity of: anItemID.! !
 
@@ -820,7 +873,7 @@ for: anApi
 
 !classDefinition: #Cashier category: 'TusLibros'!
 Object subclass: #Cashier
-	instanceVariableNames: 'cart salesBook merchantProcessor creditCard total'
+	instanceVariableNames: 'cart salesBook merchantProcessor creditCard total transactionID'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
@@ -831,17 +884,18 @@ calculateTotal
 	total := cart total.
 	! !
 
-!Cashier methodsFor: 'checkout - private' stamp: 'AM 11/30/2020 19:09:42'!
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 12/2/2020 23:49:12'!
 createSale
 	
-	
-	^OrderedCollection with: (cart items) with: total.
+	^Sale forCart: cart withTransactionID: transactionID.
 ! !
 
-!Cashier methodsFor: 'checkout - private' stamp: 'HernanWilkinson 6/17/2013 19:06'!
+!Cashier methodsFor: 'checkout - private' stamp: 'AM 12/2/2020 23:48:11'!
 debitTotal
 
-	merchantProcessor debit: total from: creditCard.
+	transactionID :=  merchantProcessor debit: total from: creditCard.
+	
+	
 	! !
 
 !Cashier methodsFor: 'checkout - private' stamp: 'AM 11/30/2020 19:26:49'!
@@ -850,19 +904,18 @@ registerSale
 	^salesBook add: self createSale! !
 
 
-!Cashier methodsFor: 'checkout' stamp: 'AM 11/30/2020 19:24:36'!
+!Cashier methodsFor: 'checkout' stamp: 'AM 12/2/2020 23:46:43'!
 checkOut
 	
-	| sale |
 	self calculateTotal.
 	self debitTotal.
-	sale := self registerSale.
+	self registerSale.
 
-	^ sale.! !
+	^ total.! !
 
 
-!Cashier methodsFor: 'initialization' stamp: 'HernanWilkinson 6/17/2013 18:53'!
-initializeToCheckout: aCart charging: aCreditCard throught: aMerchantProcessor registeringOn: aSalesBook
+!Cashier methodsFor: 'initialization' stamp: 'AM 12/2/2020 23:16:26'!
+initializeToCheckout: aCart charging: aCreditCard through: aMerchantProcessor registeringOn: aSalesBook
 	
 	cart := aCart.
 	creditCard := aCreditCard.
@@ -886,13 +939,13 @@ assertIsNotExpired: aCreditCard on: aDate
 	(aCreditCard isExpiredOn: aDate) ifTrue: [ self error: self canNotChargeAnExpiredCreditCardErrorMessage ]! !
 
 
-!Cashier class methodsFor: 'instance creation' stamp: 'HernanWilkinson 6/17/2013 18:51'!
-toCheckout: aCart charging: aCreditCard throught: aMerchantProcessor on: aDate registeringOn: aSalesBook
+!Cashier class methodsFor: 'instance creation' stamp: 'AM 12/3/2020 00:04:50'!
+toCheckout: aCart charging: aCreditCard through: aMerchantProcessor on: aDate registeringOn: aSalesBook
 	
 	self assertIsNotEmpty: aCart.
 	self assertIsNotExpired: aCreditCard on: aDate.
 	
-	^self new initializeToCheckout: aCart charging: aCreditCard throught: aMerchantProcessor registeringOn: aSalesBook! !
+	^self new initializeToCheckout: aCart charging: aCreditCard through: aMerchantProcessor registeringOn: aSalesBook! !
 
 
 !Cashier class methodsFor: 'error messages' stamp: 'HernanWilkinson 6/17/2013 18:21'!
@@ -913,21 +966,23 @@ creditCardHasNoCreditErrorMessage
 
 !classDefinition: #CreditCard category: 'TusLibros'!
 Object subclass: #CreditCard
-	instanceVariableNames: 'expiration'
+	instanceVariableNames: 'number expirationDate owner'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!CreditCard methodsFor: 'testing' stamp: 'HernanWilkinson 6/17/2013 18:39'!
+!CreditCard methodsFor: 'testing' stamp: 'AM 12/2/2020 23:03:19'!
 isExpiredOn: aDate 
 	
-	^expiration start < (Month month: aDate monthIndex year: aDate yearNumber) start ! !
+	^expirationDate start < (Month month: aDate monthIndex year: aDate yearNumber) start ! !
 
 
-!CreditCard methodsFor: 'initialization' stamp: 'HernanWilkinson 6/17/2013 18:38'!
-initializeExpiringOn: aMonth 
+!CreditCard methodsFor: 'initialization' stamp: 'AM 12/2/2020 23:02:39'!
+initializeForNumber: aCreditCardNumber expirationOn: anExpirationDate Owner: anOwnerNameString
 	
-	expiration := aMonth ! !
+	number := aCreditCardNumber.
+	expirationDate := anExpirationDate.
+	owner := anOwnerNameString.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -935,18 +990,53 @@ initializeExpiringOn: aMonth
 CreditCard class
 	instanceVariableNames: ''!
 
-!CreditCard class methodsFor: 'instance creation' stamp: 'HernanWilkinson 6/17/2013 18:38'!
-expiringOn: aMonth 
+!CreditCard class methodsFor: 'instance creation' stamp: 'AM 12/2/2020 23:20:02'!
+withNumber: aCreditCardNumber expirationOn: anExpirationDate Owner: anOwnerNameString
+
+	self assertValidNumber: aCreditCardNumber.
+	self assertValidOwnerName: anOwnerNameString.
 	
-	^self new initializeExpiringOn: aMonth! !
+	^self new initializeForNumber: aCreditCardNumber expirationOn: anExpirationDate Owner: anOwnerNameString.! !
+
+
+!CreditCard class methodsFor: 'error descriptions' stamp: 'AM 12/2/2020 23:19:26'!
+InvalidCreditCardNumberErrorDescription
+	
+	^'Credit card number must be a 16 digit number'.! !
+
+!CreditCard class methodsFor: 'error descriptions' stamp: 'AM 12/2/2020 23:24:36'!
+invalidOwnerNameErrorDescription
+
+	^'Owner name can not be empty'! !
+
+
+!CreditCard class methodsFor: 'assertions' stamp: 'AM 12/2/2020 23:23:13'!
+assertValidNumber: aCreditCardNumber
+	
+	| isValid |
+
+	isValid := (aCreditCardNumber size) = 16 and: [aCreditCardNumber allSatisfy: [:char | char isAlphaNumeric]].
+	
+	isValid ifFalse: [self error: self InvalidCreditCardNumberErrorDescription.].! !
+
+!CreditCard class methodsFor: 'assertions' stamp: 'AM 12/2/2020 23:24:04'!
+assertValidOwnerName: anOwnerNameString
+
+	anOwnerNameString isEmpty ifTrue: [self error: self invalidOwnerNameErrorDescription].! !
 
 
 !classDefinition: #Sale category: 'TusLibros'!
 Object subclass: #Sale
-	instanceVariableNames: 'total soldItems'
+	instanceVariableNames: 'total soldItems transactionID'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
+
+!Sale methodsFor: 'transaction ID' stamp: 'AM 12/2/2020 23:51:45'!
+transactionID
+
+	^transactionID.! !
+
 
 !Sale methodsFor: 'items' stamp: 'AM 11/30/2020 18:49:03'!
 soldItems
@@ -960,11 +1050,12 @@ total
 	^ total! !
 
 
-!Sale methodsFor: 'initialization' stamp: 'AM 11/30/2020 18:48:51'!
-initializeSaleOf: aSoldItemsCollection for: aSaleTotal
+!Sale methodsFor: 'initialization' stamp: 'AM 12/2/2020 23:51:19'!
+initializeSaleOf: aCart withTransactionID: aTransactionID
 
-	total := aSaleTotal.
-	soldItems := aSoldItemsCollection.! !
+	total := aCart total.
+	soldItems := aCart items.
+	transactionID := aTransactionID.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -972,10 +1063,10 @@ initializeSaleOf: aSoldItemsCollection for: aSaleTotal
 Sale class
 	instanceVariableNames: ''!
 
-!Sale class methodsFor: 'instance creation' stamp: 'AM 11/30/2020 18:47:53'!
-forCart: aCart
+!Sale class methodsFor: 'instance creation' stamp: 'AM 12/2/2020 23:50:17'!
+forCart: aCart withTransactionID: aTransactionID
 	
-	^self new initializeSaleOf: aCart items for: aCart total.
+	^self new initializeSaleOf: aCart withTransactionID: aTransactionID.
 	! !
 
 
@@ -986,44 +1077,44 @@ Object subclass: #StoreTestObjectsFactory
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!StoreTestObjectsFactory methodsFor: 'items' stamp: 'HernanWilkinson 6/17/2013 18:08'!
-itemNotSellByTheStore
+!StoreTestObjectsFactory methodsFor: 'items' stamp: 'AM 12/2/2020 23:14:50'!
+itemNotSoldByTheStore
 	
 	^'invalidBook'! !
 
-!StoreTestObjectsFactory methodsFor: 'items' stamp: 'HernanWilkinson 6/17/2013 18:08'!
-itemSellByTheStore
+!StoreTestObjectsFactory methodsFor: 'items' stamp: 'AM 12/2/2020 23:14:04'!
+itemSoldByTheStore
 	
 	^ 'validBook'! !
 
-!StoreTestObjectsFactory methodsFor: 'items' stamp: 'HernanWilkinson 6/17/2013 18:08'!
-itemSellByTheStorePrice
+!StoreTestObjectsFactory methodsFor: 'items' stamp: 'AM 12/2/2020 23:14:32'!
+itemSoldByTheStorePrice
 	
 	^10! !
 
 
-!StoreTestObjectsFactory methodsFor: 'cart' stamp: 'HernanWilkinson 6/17/2013 18:08'!
+!StoreTestObjectsFactory methodsFor: 'cart' stamp: 'AM 12/2/2020 23:13:32'!
 createCart
 	
-	^Cart acceptingItemsOf: self defaultCatalog! !
+	^Cart acceptingItemsOf: self defaultCatalogue! !
 
-!StoreTestObjectsFactory methodsFor: 'cart' stamp: 'HernanWilkinson 6/17/2013 18:08'!
-defaultCatalog
+!StoreTestObjectsFactory methodsFor: 'cart' stamp: 'AM 12/2/2020 23:14:32'!
+defaultCatalogue
 	
 	^ Dictionary new
-		at: self itemSellByTheStore put: self itemSellByTheStorePrice;
+		at: self itemSoldByTheStore put: self itemSoldByTheStorePrice;
 		yourself ! !
 
 
-!StoreTestObjectsFactory methodsFor: 'credit card' stamp: 'HernanWilkinson 6/17/2013 18:37'!
+!StoreTestObjectsFactory methodsFor: 'credit card' stamp: 'AM 12/2/2020 23:12:11'!
 expiredCreditCard
 	
-	^CreditCard expiringOn: (Month month: today monthIndex year: today yearNumber - 1)! !
+	^CreditCard withNumber: '1234123412341234' expirationOn: (Month month: today monthIndex year: today yearNumber - 1) Owner: 'Juan Perez'! !
 
-!StoreTestObjectsFactory methodsFor: 'credit card' stamp: 'HernanWilkinson 6/17/2013 18:36'!
+!StoreTestObjectsFactory methodsFor: 'credit card' stamp: 'AM 12/2/2020 23:10:41'!
 notExpiredCreditCard
 	
-	^CreditCard expiringOn: (Month month: today monthIndex year: today yearNumber + 1)! !
+	^CreditCard withNumber: '1234123412341234' expirationOn: (Month month: today monthIndex year: today yearNumber + 1) Owner: 'Juan Perez'! !
 
 
 !StoreTestObjectsFactory methodsFor: 'initialization' stamp: 'HernanWilkinson 6/17/2013 18:37'!
@@ -1036,4 +1127,3 @@ initialize
 today
 	
 	^ today! !
-
